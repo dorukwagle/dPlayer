@@ -3,19 +3,13 @@ package com.doruk.dplayer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.scene.control.Label;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.util.concurrent.TransferQueue;
 
 public class Main extends Application {
     @Override
@@ -46,15 +40,14 @@ public class Main extends Application {
 //        primaryStage.setHeight(bounds.getHeight());
         primaryStage.show();
 
-
-        primaryStage.setOnCloseRequest(event -> {
-            event.consume();
-            stage.show();
-            System.out.println("The app is being exit");
-            stage.setOnCloseRequest(event2 -> {
-                Platform.exit();
-            });
-        });
+//        primaryStage.setOnCloseRequest(event -> {
+//            event.consume();
+//            stage.show();
+//            System.out.println("The app is being exit");
+//            stage.setOnCloseRequest(event2 -> {
+//                Platform.exit();
+//            });
+//        });
     }
 
     public static void main(String[] args) {
