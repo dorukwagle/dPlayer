@@ -1,5 +1,7 @@
 package com.doruk.dplayer;
 
+import com.doruk.dplayer.controllers.NavigationController;
+import com.doruk.dplayer.views.BaseContainer;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
@@ -11,15 +13,12 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Main extends Application {
-    @Override
-    public void start(Stage primaryStage) throws IOException {
-        primaryStage.setTitle("JavaFX App");
+public class Main extends Application{
 
-        Stage stage = new Stage();
-//        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.initModality(Modality.WINDOW_MODAL);
-        stage.initOwner(primaryStage);
+//        Stage stage = new Stage();
+////        stage.initModality(Modality.APPLICATION_MODAL);
+//        stage.initModality(Modality.WINDOW_MODAL);
+//        stage.initOwner(primaryStage);
 
         //stage.initModality(Modality.NONE);
 
@@ -29,16 +28,9 @@ public class Main extends Application {
 //        stage.initStyle(StageStyle.TRANSPARENT);
 //        stage.initStyle(StageStyle.UNIFIED);
 //        stage.initStyle(StageStyle.UTILITY);
-        VBox vbox = new VBox();
-        Scene scene = new Scene(vbox);
-//        scene.setCursor(Cursor.NONE);
-        primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
 
-        Rectangle2D bounds = Screen.getPrimary().getBounds();
 //        primaryStage.setWidth(bounds.getWidth());
 //        primaryStage.setHeight(bounds.getHeight());
-        primaryStage.show();
 
 //        primaryStage.setOnCloseRequest(event -> {
 //            event.consume();
@@ -48,9 +40,19 @@ public class Main extends Application {
 //                Platform.exit();
 //            });
 //        });
-    }
 
     public static void main(String[] args) {
-        Main.launch();
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        BaseContainer container = BaseContainer.getInstance();
+        container.setStage(stage);
+
+        Stage primaryStage = container.getStage();
+        primaryStage.setTitle("dPlayer");
+        primaryStage.show();
+        new NavigationController(getParameters());
     }
 }

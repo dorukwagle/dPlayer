@@ -1,4 +1,6 @@
 package com.doruk.dplayer.views;
 
-public class PlayerView {
+import javafx.scene.layout.Pane;
+
+public class PlayerView extends Pane {
 }

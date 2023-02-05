@@ -8,6 +8,7 @@
 
 .label{
     -fx-text-fill: lightgray;
+    -fx-font-size: 15;
 }
 
 .text-field {
@@ -21,10 +22,15 @@
 
 .button{
     -fx-focus-traversable: false;
+    -fx-background-radius:20px;
+    -fx-font-size: 15;
+    -fx-border: none;
+    -fx-border-size: 1px;
 }
 
 .button:hover{
     -fx-text-fill: white;
+    -fx-cursor: hand;
 }
 
 .separator *.line {
@@ -37,9 +43,10 @@
     -fx-background-color: derive(-fx-base,45%)
 }
 
-.button:default {
+/*.button:default {
     -fx-base: -fx-accent ;
 }
+*/
 
 .table-view{
     /*-fx-background-color: derive(-fx-base, 10%);*/
@@ -67,4 +74,8 @@
 .table-row-cell{
     -fx-border-color: transparent;
     -fx-table-cell-border-color:transparent;
+}
+
+.tool-bar {
+    -fx-alignment: top-left;
 }
