@@ -3,6 +3,7 @@ package com.doruk.dplayer.controllers;
 import com.doruk.dplayer.views.BaseContainer;
 import com.doruk.dplayer.views.HomeView;
 import com.doruk.dplayer.views.PlayerView;
+import com.doruk.dplayer.views.SettingsView;
 import javafx.application.Application;
 import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
@@ -26,13 +27,13 @@ public class NavigationController {
         this.controllers.put("settings", new SettingsController());
 
         // control the stage size ( later read the database for settings and apply them )
-        this.configWindow();
+        this.configWindow(); 
         // check if there are any arguments, and launch the player if any
         Scene scene;
         if(!params.getRaw().isEmpty())
             scene = new Scene(new PlayerView());
         else
-            scene = new Scene(new HomeView());
+            scene = new Scene(new SettingsView());
         scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
 //        scene.getRoot().setStyle("");
         this.stage.setScene(scene);
