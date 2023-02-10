@@ -1,24 +1,17 @@
 package com.doruk.dplayer.views;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 
-import javax.swing.*;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.CompletableFuture;
 
 public class SettingsView extends StackPane {
@@ -78,7 +71,6 @@ public class SettingsView extends StackPane {
                 throw new RuntimeException(e);
             }
             scroller.setVvalue(1.0);
-            System.out.println(scroller.getVvalue());
         });
     }
 
@@ -170,5 +162,65 @@ public class SettingsView extends StackPane {
         Separator separator1 = new Separator();
         Separator separator2 = new Separator();
         return new VBox(separator1, general, separator2);
+    }
+
+    public CheckBox getResumeMedia() {
+        return resumeMedia;
+    }
+
+    public CheckBox getLightTheme() {
+        return lightTheme;
+    }
+
+    public ComboBox<Integer> getResumeMediaLength() {
+        return resumeMediaLength;
+    }
+
+    public Label getShortBackJump() {
+        return shortBackJump;
+    }
+
+    public Label getShortFrontJump() {
+        return shortFrontJump;
+    }
+
+    public Label getMediumBackJump() {
+        return mediumBackJump;
+    }
+
+    public Label getMediumFrontJump() {
+        return mediumFrontJump;
+    }
+
+    public Label getLongBackJump() {
+        return longBackJump;
+    }
+
+    public Label getLongFrontJump() {
+        return longFrontJump;
+    }
+
+    public Label getVolumeUp() {
+        return volumeUp;
+    }
+
+    public Label getVolumeDown() {
+        return volumeDown;
+    }
+
+    public ComboBox<Integer> getShortJump() {
+        return shortJump;
+    }
+
+    public ComboBox<Integer> getMediumJump() {
+        return mediumJump;
+    }
+
+    public ComboBox<Integer> getLongJump() {
+        return longJump;
+    }
+
+    public Button getDoneSettings() {
+        return doneSettings;
     }
 }

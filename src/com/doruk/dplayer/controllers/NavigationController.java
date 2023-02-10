@@ -1,10 +1,7 @@
 package com.doruk.dplayer.controllers;
 
 import com.doruk.dplayer.views.BaseContainer;
-import com.doruk.dplayer.views.HomeView;
 import com.doruk.dplayer.views.PlayerView;
-import com.doruk.dplayer.views.SettingsView;
-import javafx.application.Application;
 import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
 import javafx.stage.Screen;
@@ -12,7 +9,6 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 public class NavigationController {
     private Stage stage;
@@ -30,10 +26,10 @@ public class NavigationController {
         this.configWindow(); 
         // check if there are any arguments, and launch the player if any
         Scene scene;
-        if(!params.getRaw().isEmpty())
+        if(!params.getRaw().isEmpty()) // if arguments are sent open player controller
             scene = new Scene(new PlayerView());
         else
-            scene = new Scene(new SettingsView());
+            scene = new Scene(new PlayerView()); // else open HomeController
         scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
 //        scene.getRoot().setStyle("");
         this.stage.setScene(scene);

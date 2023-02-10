@@ -25,6 +25,19 @@
     -fx-font-size: 25;
 }
 
+.menu, .menu-item{
+    -fx-cursor: hand;
+}
+
+.menu:hover, .menu:showing{
+    -fx-background-color: gray;
+}
+
+.menu-item:hover{
+    -fx-background: gray;
+}
+
+
 .shortcut_keys_holder{
     -fx-text-fill: white;
     -fx-font-style: italic;
