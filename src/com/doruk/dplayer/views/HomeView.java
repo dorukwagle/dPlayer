@@ -1,5 +1,6 @@
 package com.doruk.dplayer.views;
 
+import com.doruk.dplayer.utilities.IconsProvider;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -68,12 +69,8 @@ public class HomeView extends StackPane {
     }
 
     private Button createIconBtn(String icon, int width, int height){
-        ImageView img = new ImageView(
-                new Image(getClass().getResourceAsStream(icon))
-        );
-        img.setPreserveRatio(true);
-        img.setFitHeight(height);
-        img.setFitWidth(width);
+        IconsProvider icons = new IconsProvider();
+        var img = icons.createGraphic(icon, width, height);
         Button btn = new Button();
         btn.setGraphic(img);
         btn.setFocusTraversable(false);
