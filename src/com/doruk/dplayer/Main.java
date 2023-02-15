@@ -2,16 +2,14 @@ package com.doruk.dplayer;
 
 import com.doruk.dplayer.controllers.NavigationController;
 import com.doruk.dplayer.views.BaseContainer;
+import com.doruk.dplayer.views.PlayerView;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import javax.sound.midi.Soundbank;
+import java.util.concurrent.CompletableFuture;
+
 
 public class Main extends Application{
 

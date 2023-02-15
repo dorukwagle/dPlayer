@@ -1,14 +1,16 @@
 package com.doruk.dplayer.views;
 
 import com.doruk.dplayer.utilities.IconsProvider;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToolBar;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 
 public class VideoControlPanel extends VBox {
+
+    private Button drawerBtn, playPause, previousBtn, stopBtn, nextBtn, audioBtn;
+    private Label currentPosition, totalRemainingPosition, volumeLabel;
+    private Slider seekBar, volumeSlider;
 
     public VideoControlPanel(IconsProvider icons){
         ToolBar panel = new ToolBar();
@@ -17,10 +19,11 @@ public class VideoControlPanel extends VBox {
         HBox.setHgrow(controlBase, Priority.ALWAYS);
         BorderPane sliderBox = new BorderPane();
 
-        Label currentPosition = new Label("00:00:00");
-        Slider seekBar = new Slider();
+        currentPosition = new Label("00:00:00");
+        seekBar = new Slider();
+        customizeFill(seekBar);
 
-        Label totalRemainingPosition = new Label("00:00:00");
+        totalRemainingPosition = new Label("00:00:00");
         sliderBox.setLeft(currentPosition);
         sliderBox.setCenter(seekBar);
         sliderBox.setRight(totalRemainingPosition);
@@ -32,33 +35,36 @@ public class VideoControlPanel extends VBox {
         HBox volControl = new HBox();
         btnBoxBase.setRight(volControl);
 
-        Button playPause = new Button();
-        playPause.setGraphic(icons.createGraphic("/res/pause_icon_white.png", 10, 10));
+        playPause = new Button();
+        playPause.setGraphic(icons.createGraphic("/res/pause_icon_white.png", 20, 20));
+        HBox.setMargin(playPause, new Insets(0, 20, 0, 0));
 
-        Button previousBtn = new Button();
-        previousBtn.setGraphic(icons.createGraphic("/res/previous_icon_white.png", 10, 10));
+        previousBtn = new Button();
+        previousBtn.setGraphic(icons.createGraphic("/res/previous_icon_white.png", 15, 15));
 
-        Button stopBtn = new Button();
-        stopBtn.setGraphic(icons.createGraphic("/res/play_icon_white.png", 10, 10));
+        stopBtn = new Button();
+        stopBtn.setGraphic(icons.createGraphic("/res/stop_icon_white.png", 20, 20));
 
-        Button nextBtn = new Button();
-        nextBtn.setGraphic(icons.createGraphic("/res/next_icon_white.png", 10, 10));
+        nextBtn = new Button();
+        nextBtn.setGraphic(icons.createGraphic("/res/next_icon_white.png", 15, 15));
 
 
-        Button audioBtn = new Button();
-        audioBtn.setGraphic(icons.createGraphic("/res/volume_max_icon_white.png", 10, 10));
+        audioBtn = new Button();
+        audioBtn.setGraphic(icons.createGraphic("/res/volume_max_icon_white.png", 20, 20));
 
-        Slider volumeSlider = new Slider();
-        Label volumeLabel = new Label("25%");
-        volumeLabel.setBackground(Background.fill(Paint.valueOf("red")));
-        BorderPane volumeVisual = new BorderPane();
-        volumeVisual.setTop(volumeSlider);
-        volumeVisual.setBottom(volumeLabel);
+        volumeSlider = new Slider();
+        volumeSlider.setMax(100);
+        volumeSlider.setMin(0);
+        customizeFill(volumeSlider);
+        volumeSlider.setValue(25);
+        HBox.setMargin(volumeSlider, new Insets(5, 0, 0, 0));
+
+        volumeLabel = new Label("25%");
 
         btnBox.getChildren().addAll(playPause, previousBtn, stopBtn, nextBtn);
         volControl.getChildren().addAll(audioBtn, volumeSlider, volumeLabel);
 
-        Button drawerBtn = new Button();
+        drawerBtn = new Button();
         drawerBtn.setGraphic(icons.createGraphic("/res/navigation_drawer_white.png", 30, 30));
         panel.getItems().add(drawerBtn);
 
@@ -67,5 +73,63 @@ public class VideoControlPanel extends VBox {
 //        controlBase.setBackground(Background.fill(Paint.valueOf("red")));
         controlBase.setBottom(btnBoxBase);
         getChildren().add(panel);
+    }
+
+    private void customizeFill(Slider slider){
+        slider.valueProperty().addListener((obs, oldValue, newValue) -> {
+            double percentage = 100.0 * newValue.doubleValue() / slider.getMax();
+            String style = String.format(
+                    "-track-color: linear-gradient(to right, " +
+                            "-fx-accent 0%%, " +
+                            "-fx-accent %1$.1f%%, " +
+                            "-default-track-color %1$.1f%%, " +
+                            "-default-track-color 100%%);",
+                    percentage);
+            slider.setStyle(style);
+        });
+    }
+
+    public Button getDrawerBtn() {
+        return drawerBtn;
+    }
+
+    public Button getPlayPause() {
+        return playPause;
+    }
+
+    public Button getPreviousBtn() {
+        return previousBtn;
+    }
+
+    public Button getStopBtn() {
+        return stopBtn;
+    }
+
+    public Button getNextBtn() {
+        return nextBtn;
+    }
+
+    public Button getAudioBtn() {
+        return audioBtn;
+    }
+
+    public Label getCurrentPosition() {
+        return currentPosition;
+    }
+
+    public Label getTotalRemainingPosition() {
+        return totalRemainingPosition;
+    }
+
+    public Label getVolumeLabel() {
+        return volumeLabel;
+    }
+
+    public Slider getSeekBar() {
+        return seekBar;
+    }
+
+    public Slider getVolumeSlider() {
+        return volumeSlider;
     }
 }
