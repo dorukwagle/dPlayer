@@ -40,7 +40,7 @@ public class PlayerView extends BorderPane {
 
         playerHolder.setBackground(Background.fill(Paint.valueOf("black")));
         drawer = new Drawer(playerHolder, 0.25f);
-
+        new DMediaPlayer();
         mediaPlayer = new DMediaPlayer();
         mediaView = mediaPlayer.getMediaView();
         playerHolder.getChildren().add(mediaView);

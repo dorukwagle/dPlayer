@@ -15,7 +15,7 @@ public class MenuBar extends VBox {
     public MenuBar(IconsProvider icons){
         javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
         Menu playback = new Menu("Playback");
-        playback.setGraphic(icons.createGraphic("/res/play_icon_white.png", 30, 30));
+        playback.setGraphic(icons.getIcon("play_icon", 30, 30));
 
         Menu playSpeed = new Menu("Playback Speed");
         RadioMenuItem firstQuartile = new RadioMenuItem("0.25X");
@@ -40,15 +40,15 @@ public class MenuBar extends VBox {
                 oneAnd2Quartile, oneAnd3Quartile, doubleQuartile);
 
         subtitle = new Menu("Subtitles");
-        subtitle.setGraphic(icons.createGraphic("/res/subtitles_icon_white.png", 20, 20));
+        subtitle.setGraphic(icons.getIcon("subtitles_icon", 20, 20));
         RadioMenuItem disableSubtitle = new RadioMenuItem("Disable");
         subtitle.getItems().add(disableSubtitle);
 
         audioTracks = new Menu("Audio Tracks");
-        audioTracks.setGraphic(icons.createGraphic("/res/volume_max_icon_white.png", 20, 20));
+        audioTracks.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
 
         preference = new Menu("Preferences");
-        preference.setGraphic(icons.createGraphic("/res/settings_icon_white.png", 20, 20));
+        preference.setGraphic(icons.getIcon("settings_icon", 20, 20));
 
         subtitleToggle = new ToggleGroup();
         subtitleToggle.getToggles().add(disableSubtitle);

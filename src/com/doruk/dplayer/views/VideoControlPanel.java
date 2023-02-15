@@ -4,7 +4,6 @@ import com.doruk.dplayer.utilities.IconsProvider;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Paint;
 
 public class VideoControlPanel extends VBox {
 
@@ -36,21 +35,21 @@ public class VideoControlPanel extends VBox {
         btnBoxBase.setRight(volControl);
 
         playPause = new Button();
-        playPause.setGraphic(icons.createGraphic("/res/pause_icon_white.png", 20, 20));
+        playPause.setGraphic(icons.getIcon("pause_icon", 20, 20));
         HBox.setMargin(playPause, new Insets(0, 20, 0, 0));
 
         previousBtn = new Button();
-        previousBtn.setGraphic(icons.createGraphic("/res/previous_icon_white.png", 15, 15));
+        previousBtn.setGraphic(icons.getIcon("previous_icon", 15, 15));
 
         stopBtn = new Button();
-        stopBtn.setGraphic(icons.createGraphic("/res/stop_icon_white.png", 20, 20));
+        stopBtn.setGraphic(icons.getIcon("stop_icon", 20, 20));
 
         nextBtn = new Button();
-        nextBtn.setGraphic(icons.createGraphic("/res/next_icon_white.png", 15, 15));
+        nextBtn.setGraphic(icons.getIcon("next_icon", 15, 15));
 
 
         audioBtn = new Button();
-        audioBtn.setGraphic(icons.createGraphic("/res/volume_max_icon_white.png", 20, 20));
+        audioBtn.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
 
         volumeSlider = new Slider();
         volumeSlider.setMax(100);
@@ -65,12 +64,11 @@ public class VideoControlPanel extends VBox {
         volControl.getChildren().addAll(audioBtn, volumeSlider, volumeLabel);
 
         drawerBtn = new Button();
-        drawerBtn.setGraphic(icons.createGraphic("/res/navigation_drawer_white.png", 30, 30));
+        drawerBtn.setGraphic(icons.getIcon("navigation_drawer", 30, 30));
         panel.getItems().add(drawerBtn);
 
         panel.getItems().add(controlBase);
         controlBase.setTop(sliderBox);
-//        controlBase.setBackground(Background.fill(Paint.valueOf("red")));
         controlBase.setBottom(btnBoxBase);
         getChildren().add(panel);
     }

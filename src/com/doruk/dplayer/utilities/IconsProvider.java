@@ -3,8 +3,52 @@ package com.doruk.dplayer.utilities;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class IconsProvider {
-    public ImageView createGraphic(String path, int height, int width){
+    private HashMap<String, String> iconsMapDark;
+    private HashMap<String, String> iconsMapLight;
+
+    public IconsProvider(){
+        iconsMapDark = new HashMap<>();
+        iconsMapLight = new HashMap<>();
+
+        iconsMapDark.putAll(Map.of(
+                "media_folder", "/res/media_folder.png",
+                "music_folder", "/res/music_folder.png",
+                "video_folder", "/res/video_folder.png",
+                "video_icon", "/res/video_icon.png",
+                "music_icon", "/res/music_icon.png",
+                "navigation_drawer_icon", "/res/navigation_drawer_black.png",
+                "next_icon", "/res/next_icon_black.png",
+                "pause_icon", "/res/pause_icon_black.png",
+                "play_icon", "/res/play_icon_black.png",
+                "previous_icon", "/res/previous_icon_black.png"
+        ));
+        iconsMapDark.putAll(Map.of(
+                "settings_icon", "/res/settings_icon_black.png",
+                "stop_icon", "/res/stop_icon_black.png",
+                "subtitles_icon", "/res/subtitles_icon_black.png",
+                "volume_max_icon", "/res/volume_max_icon_black.png",
+                "volume_mute_icon", "/res/volume_mute_icon_black.png"
+        ));
+
+        iconsMapLight.putAll(Map.of(
+                "navigation_drawer_icon", "/res/navigation_drawer_white.png",
+                "next_icon", "/res/next_icon_white.png",
+                "pause_icon", "/res/pause_icon_white.png",
+                "play_icon", "/res/play_icon_white.png",
+                "previous_icon", "/res/previous_icon_white.png",
+                "settings_icon", "/res/settings_icon_white.png",
+                "stop_icon", "/res/stop_icon_white.png",
+                "subtitles_icon", "/res/subtitles_icon_white.png",
+                "volume_max_icon", "/res/volume_max_icon_white.png",
+                "volume_mute_icon", "/res/volume_mute_icon_white.png"
+        ));
+    }
+
+    private ImageView createGraphic(String path, int height, int width){
         ImageView img = new ImageView(
                 new Image(this.getClass().getResourceAsStream(path))
         );
@@ -12,5 +56,12 @@ public class IconsProvider {
         img.setFitHeight(height);
         img.setFitWidth(width);
         return img;
+    }
+
+    public ImageView getIcon(String iconName, int height, int width){
+        // here first read the theme and load accordingly
+        boolean darkTheme = true;
+        String path = (darkTheme? iconsMapDark.get(iconName): iconsMapLight.get(iconName));
+        return createGraphic(path, height, width);
     }
 }

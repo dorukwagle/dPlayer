@@ -43,7 +43,7 @@ public class HomeView extends StackPane {
         itemHolder.setAlignment(Pos.CENTER);
         itemHolder.setVgap(20);
 
-        btnChooseFile = createIconBtn("/res/video_icon.png", 100, 100);
+        btnChooseFile = createIconBtn("video_icon", 100, 100);
         Text lbl = new Text("Choose the Media file Or the Folder");
         Font font = Font.font("Verdana", FontWeight.EXTRA_BOLD, 25);
         lbl.setFont(font);
@@ -52,9 +52,9 @@ public class HomeView extends StackPane {
         mLay.setAlignment(Pos.CENTER);
         mLay.setSpacing(20);
 
-        btnChooseAudioDir = createIconBtn("/res/music_folder.png", 100, 100);
-        btnChooseMediaDir = createIconBtn("/res/media_folder.png", 100, 100);
-        btnChooseVideoDir = createIconBtn("/res/video_folder.png", 100, 100);
+        btnChooseAudioDir = createIconBtn("music_folder", 100, 100);
+        btnChooseMediaDir = createIconBtn("media_folder", 100, 100);
+        btnChooseVideoDir = createIconBtn("video_folder", 100, 100);
 
         HBox dirHolder = new HBox(btnChooseAudioDir, btnChooseVideoDir, btnChooseMediaDir);
         dirHolder.setAlignment(Pos.CENTER);
@@ -70,7 +70,7 @@ public class HomeView extends StackPane {
 
     private Button createIconBtn(String icon, int width, int height){
         IconsProvider icons = new IconsProvider();
-        var img = icons.createGraphic(icon, width, height);
+        var img = icons.getIcon(icon, width, height);
         Button btn = new Button();
         btn.setGraphic(img);
         btn.setFocusTraversable(false);
