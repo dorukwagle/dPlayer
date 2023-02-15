@@ -64,7 +64,7 @@ public class VideoControlPanel extends VBox {
         volControl.getChildren().addAll(audioBtn, volumeSlider, volumeLabel);
 
         drawerBtn = new Button();
-        drawerBtn.setGraphic(icons.getIcon("navigation_drawer", 30, 30));
+        drawerBtn.setGraphic(icons.getIcon("navigation_drawer_icon", 30, 30));
         panel.getItems().add(drawerBtn);
 
         panel.getItems().add(controlBase);

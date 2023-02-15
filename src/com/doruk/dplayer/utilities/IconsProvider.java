@@ -59,9 +59,14 @@ public class IconsProvider {
     }
 
     public ImageView getIcon(String iconName, int height, int width){
+        // check if the iconName exists in the hashMap
+        if(!iconsMapLight.containsKey(iconName) || !iconsMapDark.containsKey(iconName)){
+            System.out.println(iconName + ": icon not found");
+            System.exit(-1);
+        }
         // here first read the theme and load accordingly
         boolean darkTheme = true;
-        String path = (darkTheme? iconsMapDark.get(iconName): iconsMapLight.get(iconName));
+        String path = (darkTheme? iconsMapLight.get(iconName): iconsMapDark.get(iconName));
         return createGraphic(path, height, width);
     }
 }

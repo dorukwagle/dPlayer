@@ -13,8 +13,7 @@
     <orderEntry type="library" exported="" name="javafx.graphics" level="project" />
     <orderEntry type="library" exported="" name="javafx.media" level="project" />
     <orderEntry type="library" exported="" name="javafx.swing" level="project" />
-    <orderEntry type="library" exported="" name="javafx.web" level="project" />
     <orderEntry type="library" name="javafx.controls" level="project" />
-    <orderEntry type="library" name="jna-platform-5.12.1" level="project" />
+    <orderEntry type="library" name="vlcj-javafx" level="project" />
   </component>
 </module>
