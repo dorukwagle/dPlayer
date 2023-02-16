@@ -17,21 +17,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class PlayerView extends BorderPane {
 
-    private MenuBar menuBar;
-    private VideoControlPanel controlPanel;
     private Drawer drawer;
-
-    private IconsProvider icons;
-    private MediaPlayerInterface mediaPlayer;
-    private ImageView mediaView;
     private StackPane playerHolder;
-    private ImageView view;
 
 
-    public PlayerView(Stage stage) {
-        view = new ImageView();
-        icons = new IconsProvider();
-        menuBar = new MenuBar(icons);
+    public PlayerView(ImageView mediaView, MenuBar menuBar, VideoControlPanel controlPanel) {
         setTop(menuBar);
 
         playerHolder = new StackPane();
@@ -40,47 +30,20 @@ public class PlayerView extends BorderPane {
 
         playerHolder.setBackground(Background.fill(Paint.valueOf("black")));
         drawer = new Drawer(playerHolder, 0.25f);
-        mediaPlayer = new DMediaPlayer();
-        mediaView = mediaPlayer.getMediaView();
+
         playerHolder.getChildren().add(mediaView);
         StackPane.setAlignment(mediaView, Pos.CENTER);
-        try {
-            mediaPlayer.load("/home/doruk/Downloads/Video/test3.mkv");
-//            mediaPlayer.load("/home/doruk/Downloads/Video/song.mp4");
-//            mediaPlayer.load("/data/Movies/Gangster_(2022)_Hindi_Dubbed_720p.mp4");
-        } catch (FileNotFoundException e) {
-            System.out.println(e.toString());
-        }
 
-//        mediaPlayer.play();
 
         playerHolder.getChildren().add(drawer);
-
-        controlPanel = new VideoControlPanel(icons);
         setBottom(controlPanel);
+    }
 
-        controlPanel.getDrawerBtn().setOnAction(e -> {
-            var check = drawer.isHidden();
-            if (!check) {
-                drawer.hide();
-            } else {
-                drawer.show();
-            }
-        });
+    public Drawer getDrawer() {
+        return drawer;
+    }
 
-        CompletableFuture.runAsync(()->{
-            try {
-                Thread.sleep(500);
-                float height = (float) (getHeight() - menuBar.getHeight() - controlPanel.getHeight());
-                mediaPlayer.setHeight(height);
-//                Thread.sleep(5000);
-//                Platform.runLater(() -> {
-//                    stage.setFullScreen(true);
-//                });
-
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+    public StackPane getPlayerHolder() {
+        return playerHolder;
     }
 }
