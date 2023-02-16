@@ -1,16 +1,14 @@
 package com.doruk.dplayer.views;
 
 import com.doruk.dplayer.utilities.IconsProvider;
-import javafx.scene.control.CheckMenuItem;
-import javafx.scene.control.Menu;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 public class MenuBar extends VBox {
 
     private Menu subtitle, audioTracks, preference;
-    private ToggleGroup subtitleToggle, audioTracksToggle;
+    private CheckMenuItem soundOnly;
+    private ToggleGroup subtitleToggle, audioTracksToggle, playBackSpeedGroup;
 
     public MenuBar(IconsProvider icons){
         javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
@@ -32,11 +30,11 @@ public class MenuBar extends VBox {
 
         playback.getItems().add(playSpeed);
 
-        CheckMenuItem soundOnly = new CheckMenuItem("Audio Only");
+        soundOnly = new CheckMenuItem("Audio Only");
         playback.getItems().add(soundOnly);
 
-        ToggleGroup toggleGroup = new ToggleGroup();
-        toggleGroup.getToggles().addAll(firstQuartile, secondQuartile, thirdQuartile, normal, oneAnd1Quartile,
+        playBackSpeedGroup = new ToggleGroup();
+        playBackSpeedGroup.getToggles().addAll(firstQuartile, secondQuartile, thirdQuartile, normal, oneAnd1Quartile,
                 oneAnd2Quartile, oneAnd3Quartile, doubleQuartile);
 
         subtitle = new Menu("Subtitles");
@@ -68,5 +66,25 @@ public class MenuBar extends VBox {
         RadioMenuItem item = new RadioMenuItem(text);
         audioTracks.getItems().add(item);
         audioTracksToggle.getToggles().add(item);
+    }
+
+    public Menu getPreference() {
+        return preference;
+    }
+
+    public CheckMenuItem getSoundOnly() {
+        return soundOnly;
+    }
+
+    public ToggleGroup getSubtitleToggle() {
+        return subtitleToggle;
+    }
+
+    public ToggleGroup getAudioTracksToggle() {
+        return audioTracksToggle;
+    }
+
+    public ToggleGroup getPlayBackSpeedGroup() {
+        return playBackSpeedGroup;
     }
 }
