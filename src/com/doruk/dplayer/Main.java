@@ -1,10 +1,14 @@
 package com.doruk.dplayer;
 
 import com.doruk.dplayer.controllers.NavigationController;
+import com.doruk.dplayer.utilities.PreferencesManager;
 import com.doruk.dplayer.views.BaseContainer;
 import com.doruk.dplayer.views.PlayerView;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 import javax.sound.midi.Soundbank;
@@ -52,5 +56,6 @@ public class Main extends Application{
         primaryStage.setTitle("dPlayer");
         primaryStage.show();
         new NavigationController(getParameters());
+
     }
 }

@@ -9,24 +9,28 @@ import java.util.Map;
 public class IconsProvider {
     private HashMap<String, String> iconsMapDark;
     private HashMap<String, String> iconsMapLight;
+    private HashMap<String, String> commonMaps;
 
     public IconsProvider(){
         iconsMapDark = new HashMap<>();
         iconsMapLight = new HashMap<>();
+        commonMaps = new HashMap<>();
 
-        iconsMapDark.putAll(Map.of(
+        commonMaps.putAll(Map.of(
                 "media_folder", "/res/media_folder.png",
                 "music_folder", "/res/music_folder.png",
                 "video_folder", "/res/video_folder.png",
                 "video_icon", "/res/video_icon.png",
-                "music_icon", "/res/music_icon.png",
+                "music_icon", "/res/music_icon.png"
+        ));
+
+
+        iconsMapDark.putAll(Map.of(
                 "navigation_drawer_icon", "/res/navigation_drawer_black.png",
                 "next_icon", "/res/next_icon_black.png",
                 "pause_icon", "/res/pause_icon_black.png",
                 "play_icon", "/res/play_icon_black.png",
-                "previous_icon", "/res/previous_icon_black.png"
-        ));
-        iconsMapDark.putAll(Map.of(
+                "previous_icon", "/res/previous_icon_black.png",
                 "settings_icon", "/res/settings_icon_black.png",
                 "stop_icon", "/res/stop_icon_black.png",
                 "subtitles_icon", "/res/subtitles_icon_black.png",
@@ -60,13 +64,21 @@ public class IconsProvider {
 
     public ImageView getIcon(String iconName, int height, int width){
         // check if the iconName exists in the hashMap
-        if(!iconsMapLight.containsKey(iconName) || !iconsMapDark.containsKey(iconName)){
+        if(!keyExists(iconName)){
             System.out.println(iconName + ": icon not found");
             System.exit(-1);
         }
+        if(commonMaps.containsKey(iconName))
+            return createGraphic(commonMaps.get(iconName), height, width);
+
         // here first read the theme and load accordingly
         boolean darkTheme = true;
         String path = (darkTheme? iconsMapLight.get(iconName): iconsMapDark.get(iconName));
         return createGraphic(path, height, width);
+    }
+
+    private boolean keyExists(String key){
+        return (iconsMapLight.containsKey(key) || iconsMapDark.containsKey(key)
+                || commonMaps.containsKey(key));
     }
 }

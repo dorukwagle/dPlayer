@@ -11,6 +11,7 @@ import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.util.concurrent.CompletableFuture;
 
@@ -32,13 +33,13 @@ public class PlayerController implements Controllers {
         playerView = new PlayerView(mediaView, menuBar, controlPanel);
         scene = new Scene(playerView);
 
-        try {
-            mediaPlayer.load("/home/doruk/Downloads/Video/test3.mkv");
-//            mediaPlayer.load("/home/doruk/Downloads/Video/song.mp4");
-//            mediaPlayer.load("/data/Movies/Gangster_(2022)_Hindi_Dubbed_720p.mp4");
-        } catch (FileNotFoundException e) {
-            System.out.println(e.toString());
-        }
+//        try {
+//            mediaPlayer.load("/home/doruk/Downloads/Video/test3.mkv");
+////            mediaPlayer.load("/home/doruk/Downloads/Video/song.mp4");
+////            mediaPlayer.load("/data/Movies/Gangster_(2022)_Hindi_Dubbed_720p.mp4");
+//        } catch (FileNotFoundException e) {
+//            System.out.println(e.toString());
+//        }
 
         controlPanel.getDrawerBtn().setOnAction(e -> {
             var check = drawer.isHidden();
@@ -69,5 +70,9 @@ public class PlayerController implements Controllers {
     @Override
     public Scene getScene(){
         return scene;
+    }
+
+    public Button getNext(){
+        return null;
     }
 }
