@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
+import javafx.scene.control.Menu;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerController implements Controllers {
@@ -74,5 +74,9 @@ public class PlayerController implements Controllers {
 
     public Button getNext(){
         return null;
+    }
+
+    public Menu getPreferenceButton(){
+        return menuBar.getPreference();
     }
 }

@@ -16,15 +16,19 @@ import javafx.stage.Stage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
 
 public class NavigationController {
     private Stage stage;
     private Map<String, Controllers> controllers;
+    private Stack<Controllers> views;
     private float screenSize = 0.8f;
 
     public NavigationController(Parameters params){
         stage = BaseContainer.getInstance().getStage();
         controllers = new HashMap<>();
+        views = new Stack<>();
+
         controllers.put("home", new HomeController());
         controllers.put("player", new PlayerController());
         controllers.put("settings", new SettingsController());
@@ -33,11 +37,15 @@ public class NavigationController {
         this.configWindow();
         // check if there are any arguments, and launch the player if any
          Scene scene;
-        if(!params.getRaw().isEmpty()) // if arguments are sent open player controller
-            scene = controllers.get("player").getScene();
-        else
-            scene = controllers.get("settings").getScene(); // else open HomeController
-        scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
+        if(!params.getRaw().isEmpty()) { // if arguments are sent open player controller
+            scene = getScene("home");
+            views.push(controllers.get("home"));
+        }
+        else {
+            scene = getScene("player");
+            views.push(controllers.get("player"));
+        }
+        addListeners();
 //        scene.getRoot().setStyle("");
 //        KeyCombination cntrlZ = new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN);
 //        scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
@@ -51,6 +59,33 @@ public class NavigationController {
 //            }
 //        });
         this.stage.setScene(scene);
+    }
+
+    private void addListeners(){
+        HomeController homeController = (HomeController)controllers.get("home");
+        SettingsController settingsController = (SettingsController) controllers.get("settings");
+        PlayerController playerController = (PlayerController) controllers.get("player");
+
+        homeController.getPreferenceButton().setOnAction(event -> {
+            this.stage.setScene(getScene("settings"));
+            views.push(homeController);
+        });
+
+        playerController.getPreferenceButton().setOnAction(event -> {
+            this.stage.setScene(getScene("settings"));
+            views.push(playerController);
+        });
+
+
+        settingsController.getDoneSettings().setOnAction(event -> this.stage.setScene(views.pop().getScene()));
+
+    }
+
+    private Scene getScene(String view){
+        Controllers cont = controllers.get(view);
+        Scene scene = cont.getScene();
+        scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
+        return scene;
     }
 
     private void configWindow(){

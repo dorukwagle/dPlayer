@@ -5,6 +5,7 @@ import com.doruk.dplayer.contracts.Controllers;
 import com.doruk.dplayer.views.HomeView;
 import com.doruk.dplayer.views.PlayerView;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 
 
 public class HomeController implements Controllers {
@@ -19,5 +20,9 @@ public class HomeController implements Controllers {
     @Override
     public Scene getScene() {
         return scene;
+    }
+
+    public Button getPreferenceButton(){
+        return homeView.getBtnPreferences();
     }
 }
