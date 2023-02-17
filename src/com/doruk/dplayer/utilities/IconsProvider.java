@@ -72,8 +72,9 @@ public class IconsProvider {
             return createGraphic(commonMaps.get(iconName), height, width);
 
         // here first read the theme and load accordingly
-        boolean darkTheme = true;
-        String path = (darkTheme? iconsMapLight.get(iconName): iconsMapDark.get(iconName));
+        boolean lightTheme = new PreferencesManager().isLightThemeChecked();
+
+        String path = (lightTheme? iconsMapDark.get(iconName): iconsMapLight.get(iconName));
         return createGraphic(path, height, width);
     }
 

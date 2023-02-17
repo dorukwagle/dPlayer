@@ -11,7 +11,7 @@ public class PreferencesManager {
     public void resetDefault(){
         pref.putBoolean("lightThemeChecked", false);
         pref.putBoolean("resumePlayback", true);
-        pref.putLong("resumePlaybackLongerThan", 13); // minutes
+        pref.putLong("resumePlaybackLongerThan", 12); // minutes
 
         pref.put("shortBackJump", "LEFT");
         pref.put("shortFrontJump", "RIGHT");
@@ -36,7 +36,7 @@ public class PreferencesManager {
     }
 
     public long getResumePlaybackLength(){
-        return pref.getLong("resumePlaybackLongerThan", 13); // resume if the playback is longer than given time
+        return pref.getLong("resumePlaybackLongerThan", 12); // resume if the playback is longer than given time
     }
 
     public long getShortJumpDuration(){

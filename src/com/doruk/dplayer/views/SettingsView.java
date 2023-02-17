@@ -1,6 +1,7 @@
 package com.doruk.dplayer.views;
 
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -24,7 +25,7 @@ public class SettingsView extends StackPane {
                     volumeUp, volumeDown;
 
     private ComboBox<Integer> shortJump, mediumJump, longJump;
-    private Button doneSettings;
+    private Button saveSettings, doneSettings, resetSettings;
 
 
     public SettingsView(){
@@ -54,9 +55,12 @@ public class SettingsView extends StackPane {
         lay.getChildren().add(createHeading("Seeking Preferences"));
         createSeekingPreferences();
 
-        doneSettings = new Button("Completed");
-        doneSettings.setStyle("-fx-padding:5px;");
-        HBox btnHolder = new HBox(doneSettings);
+        doneSettings = new Button("Done");
+        saveSettings = new Button("Apply");
+        resetSettings = new Button("Reset");
+        HBox.setMargin(resetSettings, new Insets(0, 0, 0, 25));
+        HBox btnHolder = new HBox(saveSettings, doneSettings, resetSettings);
+        btnHolder.setSpacing(10);
         btnHolder.setAlignment(Pos.CENTER);
 
         lay.getChildren().add(btnHolder);
@@ -136,10 +140,8 @@ public class SettingsView extends StackPane {
 
         shortJump = new ComboBox<>(FXCollections.observableList(List.of(5, 10, 15)));
         shortJump.setValue(5);
-        shortJump.setEditable(true);
         mediumJump = new ComboBox<>(FXCollections.observableList(List.of(10, 15, 20, 25, 30)));
         mediumJump.setValue(10);
-        mediumJump.setEditable(true);
         longJump = new ComboBox<>(FXCollections.observableList(List.of(30, 40, 45, 60)));
         longJump.setValue(40);
 
@@ -222,5 +224,13 @@ public class SettingsView extends StackPane {
 
     public Button getDoneSettings() {
         return doneSettings;
+    }
+
+    public Button getSaveSettings(){
+        return saveSettings;
+    }
+
+    public Button getResetSettings() {
+        return resetSettings;
     }
 }
