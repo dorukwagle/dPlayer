@@ -11,6 +11,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 
+import java.util.concurrent.CompletableFuture;
+
 public class SettingsController implements Controllers {
     private Scene scene;
     private SettingsView settingsView;
@@ -77,6 +79,18 @@ public class SettingsController implements Controllers {
     @Override
     public Scene getScene() {
         return scene;
+    }
+
+    public void scrollToBottom(){
+        //        scroll the scrollbar to bottom after some time
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            settingsView.getScroller().setVvalue(1.0);
+        });
     }
 
     public Button getDoneSettings(){

@@ -6,7 +6,8 @@ import javafx.scene.layout.VBox;
 
 public class MenuBar extends VBox {
 
-    private Menu subtitle, audioTracks, preference;
+    private Menu subtitle, audioTracks, controls;
+    private MenuItem preference, exit;
     private CheckMenuItem soundOnly;
     private ToggleGroup subtitleToggle, audioTracksToggle, playBackSpeedGroup;
 
@@ -45,14 +46,19 @@ public class MenuBar extends VBox {
         audioTracks = new Menu("Audio Tracks");
         audioTracks.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
 
-        preference = new Menu("Preferences");
-        preference.setGraphic(icons.getIcon("settings_icon", 20, 20));
+        controls = new Menu("Controls");
+        controls.setGraphic(icons.getIcon("settings_icon", 20, 20));
+
+        preference = new MenuItem("Preferences");
+        exit = new MenuItem("Exit");
+        controls.getItems().addAll(preference, exit);
+
 
         subtitleToggle = new ToggleGroup();
         subtitleToggle.getToggles().add(disableSubtitle);
         audioTracksToggle = new ToggleGroup();
 
-        menuBar.getMenus().addAll(playback, subtitle, audioTracks, preference);
+        menuBar.getMenus().addAll(playback, subtitle, audioTracks, controls);
         getChildren().add(menuBar);
     }
 
@@ -68,8 +74,12 @@ public class MenuBar extends VBox {
         audioTracksToggle.getToggles().add(item);
     }
 
-    public Menu getPreference() {
+    public MenuItem getPreference() {
         return preference;
+    }
+
+    public MenuItem getExit(){
+        return exit;
     }
 
     public CheckMenuItem getSoundOnly() {

@@ -5,12 +5,10 @@ import com.doruk.dplayer.views.BaseContainer;
 import com.doruk.dplayer.views.PlayerView;
 import javafx.application.Application.Parameters;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -67,18 +65,22 @@ public class NavigationController {
         PlayerController playerController = (PlayerController) controllers.get("player");
 
         homeController.getPreferenceButton().setOnAction(event -> {
-            this.stage.setScene(getScene("settings"));
+            displaySettingsView(settingsController);
             views.push(homeController);
         });
 
         playerController.getPreferenceButton().setOnAction(event -> {
-            this.stage.setScene(getScene("settings"));
+            displaySettingsView(settingsController);
             views.push(playerController);
         });
 
-
         settingsController.getDoneSettings().setOnAction(event -> this.stage.setScene(views.pop().getScene()));
 
+    }
+
+    private void displaySettingsView(SettingsController controller){
+        this.stage.setScene(getScene("settings"));
+        controller.scrollToBottom();
     }
 
     private Scene getScene(String view){

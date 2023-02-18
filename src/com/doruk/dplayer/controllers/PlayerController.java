@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 
 import java.awt.*;
-import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerController implements Controllers {
@@ -76,7 +76,7 @@ public class PlayerController implements Controllers {
         return null;
     }
 
-    public Menu getPreferenceButton(){
+    public MenuItem getPreferenceButton(){
         return menuBar.getPreference();
     }
 }

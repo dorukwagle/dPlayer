@@ -26,10 +26,11 @@ public class SettingsView extends StackPane {
 
     private ComboBox<Integer> shortJump, mediumJump, longJump;
     private Button saveSettings, doneSettings, resetSettings;
+    private ScrollPane scroller;
 
 
     public SettingsView(){
-        ScrollPane scroller = new ScrollPane();
+        scroller = new ScrollPane();
         scroller.setFitToHeight(true);
         scroller.setFitToWidth(true);
         scroller.pannableProperty().set(true);
@@ -66,16 +67,6 @@ public class SettingsView extends StackPane {
         lay.getChildren().add(btnHolder);
         scroller.setContent(baseLay);
         getChildren().add(scroller);
-
-//        scroll the scrollbar to bottom after some time
-        CompletableFuture.runAsync(() -> {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            scroller.setVvalue(1.0);
-        });
     }
 
     private void createGeneralPreferences(){
@@ -232,5 +223,9 @@ public class SettingsView extends StackPane {
 
     public Button getResetSettings() {
         return resetSettings;
+    }
+
+    public ScrollPane getScroller(){
+        return scroller;
     }
 }
