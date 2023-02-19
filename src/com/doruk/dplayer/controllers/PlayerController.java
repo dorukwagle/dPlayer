@@ -8,11 +8,16 @@ import com.doruk.dplayer.views.Drawer;
 import com.doruk.dplayer.views.MenuBar;
 import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
+import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 
 import java.awt.*;
 import javafx.scene.control.MenuItem;
+
+import javax.security.auth.login.Configuration;
+import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerController implements Controllers {
@@ -65,6 +70,16 @@ public class PlayerController implements Controllers {
             }
         });
 
+    }
+
+    public PlayerController(Parameters params){
+        this();
+        System.out.println(params.getRaw().toString());
+    }
+
+    public PlayerController(File[] params){
+        this();
+        System.out.println(Arrays.stream(params).toList());
     }
 
     @Override

@@ -54,8 +54,7 @@ public class Main extends Application{
 
         Stage primaryStage = container.getStage();
         primaryStage.setTitle("dPlayer");
-        primaryStage.show();
         new NavigationController(getParameters());
-
+        primaryStage.show();
     }
 }

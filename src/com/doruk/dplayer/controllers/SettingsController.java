@@ -89,6 +89,8 @@ public class SettingsController implements Controllers {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+            if(!settingsView.getScroller().isVisible())
+                return;
             settingsView.getScroller().setVvalue(1.0);
         });
     }

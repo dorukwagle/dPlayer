@@ -11,12 +11,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.util.List;
 
 
 public class HomeView extends StackPane {
     private final Button btnPreferences;
     private final Button btnChooseFile;
-    private final Button btnChooseAudioDir, btnChooseVideoDir, btnChooseMediaDir;
+    private final Button btnChooseAudioDir, btnChooseVideoDir;
 
     public HomeView() {
         // add the toolbar
@@ -53,10 +58,10 @@ public class HomeView extends StackPane {
         mLay.setSpacing(20);
 
         btnChooseAudioDir = createIconBtn("music_folder", 100, 100);
-        btnChooseMediaDir = createIconBtn("media_folder", 100, 100);
+//        btnChooseMediaDir = createIconBtn("media_folder", 100, 100);
         btnChooseVideoDir = createIconBtn("video_folder", 100, 100);
 
-        HBox dirHolder = new HBox(btnChooseAudioDir, btnChooseVideoDir, btnChooseMediaDir);
+        HBox dirHolder = new HBox(btnChooseAudioDir, btnChooseVideoDir);
         dirHolder.setAlignment(Pos.CENTER);
         dirHolder.setSpacing(10);
         itemHolder.getChildren().add(mLay);
@@ -67,6 +72,17 @@ public class HomeView extends StackPane {
         getChildren().add(bar);
 
     }
+
+    public File chooseDirectory(){
+        DirectoryChooser chooser = new DirectoryChooser();
+        return chooser.showDialog(BaseContainer.getInstance().getStage());
+    }
+
+    public List<File> chooseFiles(){
+        FileChooser chooser = new FileChooser();
+        return chooser.showOpenMultipleDialog(BaseContainer.getInstance().getStage());
+    }
+
 
     private Button createIconBtn(String icon, int width, int height){
         IconsProvider icons = new IconsProvider();
@@ -93,7 +109,7 @@ public class HomeView extends StackPane {
         return btnChooseVideoDir;
     }
 
-    public Button getBtnChooseMediaDir() {
-        return btnChooseMediaDir;
-    }
+//    public Button getBtnChooseMediaDir() {
+//        return btnChooseMediaDir;
+//    }
 }
