@@ -1,6 +1,7 @@
 package com.doruk.dplayer.controllers;
 
 import com.doruk.dplayer.contracts.Controllers;
+import com.doruk.dplayer.utilities.ResourceProvider;
 import com.doruk.dplayer.views.BaseContainer;
 import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
@@ -16,11 +17,13 @@ public class NavigationController {
     private Map<String, Controllers> controllers;
     private Stack<Controllers> views;
     private float screenSize = 0.8f;
+    private ResourceProvider resourceProvider;
 
     public NavigationController(Parameters params){
         stage = BaseContainer.getInstance().getStage();
         controllers = new HashMap<>();
         views = new Stack<>();
+        resourceProvider = new ResourceProvider();
 
         controllers.put("home", new HomeController());
         controllers.put("player", null);
@@ -86,6 +89,11 @@ public class NavigationController {
             displaySettingsView((SettingsController) controllers.get("settings"));
             views.push(controller);
         });
+
+        controller.getStopButton().setOnAction(event -> {
+            views.push(controllers.get("home"));
+            this.stage.setScene(getScene("home"));
+        });
     }
 
     private void displaySettingsView(SettingsController controller){
@@ -96,7 +104,7 @@ public class NavigationController {
     private Scene getScene(String view){
         Controllers cont = controllers.get(view);
         Scene scene = cont.getScene();
-        scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
+        scene.getStylesheets().add(resourceProvider.getCssFile());
         return scene;
     }
 

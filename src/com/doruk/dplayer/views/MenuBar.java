@@ -1,6 +1,6 @@
 package com.doruk.dplayer.views;
 
-import com.doruk.dplayer.utilities.IconsProvider;
+import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
@@ -11,7 +11,7 @@ public class MenuBar extends VBox {
     private CheckMenuItem soundOnly;
     private ToggleGroup subtitleToggle, audioTracksToggle, playBackSpeedGroup;
 
-    public MenuBar(IconsProvider icons){
+    public MenuBar(ResourceProvider icons){
         javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
         Menu playback = new Menu("Playback");
         playback.setGraphic(icons.getIcon("play_icon", 30, 30));

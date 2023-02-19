@@ -1,6 +1,6 @@
 package com.doruk.dplayer.views;
 
-import com.doruk.dplayer.utilities.IconsProvider;
+import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -11,7 +11,7 @@ public class VideoControlPanel extends VBox {
     private Label currentPosition, totalRemainingPosition, volumeLabel;
     private Slider seekBar, volumeSlider;
 
-    public VideoControlPanel(IconsProvider icons){
+    public VideoControlPanel(ResourceProvider icons){
         ToolBar panel = new ToolBar();
 
         BorderPane controlBase = new BorderPane();

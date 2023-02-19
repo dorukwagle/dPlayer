@@ -1,18 +1,11 @@
 package com.doruk.dplayer.views;
 
-import com.doruk.dplayer.contracts.MediaPlayerInterface;
-import com.doruk.dplayer.mediaplayer.DMediaPlayer;
-import com.doruk.dplayer.utilities.IconsProvider;
 import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
-
-import java.io.FileNotFoundException;
-import java.util.concurrent.CompletableFuture;
 
 
 public class PlayerView extends BorderPane {

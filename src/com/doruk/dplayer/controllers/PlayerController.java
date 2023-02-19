@@ -3,19 +3,18 @@ package com.doruk.dplayer.controllers;
 import com.doruk.dplayer.contracts.Controllers;
 import com.doruk.dplayer.contracts.MediaPlayerInterface;
 import com.doruk.dplayer.mediaplayer.DMediaPlayer;
-import com.doruk.dplayer.utilities.IconsProvider;
+import com.doruk.dplayer.utilities.ResourceProvider;
 import com.doruk.dplayer.views.Drawer;
 import com.doruk.dplayer.views.MenuBar;
 import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
-import java.awt.*;
 import javafx.scene.control.MenuItem;
 
-import javax.security.auth.login.Configuration;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -30,7 +29,7 @@ public class PlayerController implements Controllers {
     private Scene scene;
 
     public PlayerController(){
-        IconsProvider icons = new IconsProvider();
+        ResourceProvider icons = new ResourceProvider();
         mediaPlayer = new DMediaPlayer();
         mediaView = mediaPlayer.getMediaView();
         menuBar = new MenuBar(icons);
@@ -93,5 +92,9 @@ public class PlayerController implements Controllers {
 
     public MenuItem getPreferenceButton(){
         return menuBar.getPreference();
+    }
+
+    public Button getStopButton(){
+        return controlPanel.getStopBtn();
     }
 }

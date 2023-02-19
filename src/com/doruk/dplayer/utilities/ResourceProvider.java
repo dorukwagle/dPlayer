@@ -6,15 +6,17 @@ import javafx.scene.image.ImageView;
 import java.util.HashMap;
 import java.util.Map;
 
-public class IconsProvider {
+public class ResourceProvider {
     private HashMap<String, String> iconsMapDark;
     private HashMap<String, String> iconsMapLight;
     private HashMap<String, String> commonMaps;
+    private PreferencesManager preferences;
 
-    public IconsProvider(){
+    public ResourceProvider(){
         iconsMapDark = new HashMap<>();
         iconsMapLight = new HashMap<>();
         commonMaps = new HashMap<>();
+        preferences = new PreferencesManager();
 
         commonMaps.putAll(Map.of(
                 "media_folder", "/res/media_folder.png",
@@ -72,14 +74,24 @@ public class IconsProvider {
             return createGraphic(commonMaps.get(iconName), height, width);
 
         // here first read the theme and load accordingly
-        boolean lightTheme = new PreferencesManager().isLightThemeChecked();
+        boolean lightTheme = preferences.isLightThemeChecked();
 
         String path = (lightTheme? iconsMapDark.get(iconName): iconsMapLight.get(iconName));
         return createGraphic(path, height, width);
+    }
+
+    public String getCssFile(){
+        String path = "";
+        if(preferences.isLightThemeChecked())
+            path = "";
+        else
+            path = "/assets/dark_theme_adv.css";
+        return this.getClass().getResource(path).toString();
     }
 
     private boolean keyExists(String key){
         return (iconsMapLight.containsKey(key) || iconsMapDark.containsKey(key)
                 || commonMaps.containsKey(key));
     }
+
 }
