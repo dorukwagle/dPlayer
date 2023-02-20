@@ -40,11 +40,17 @@ public class HomeModel {
         return readDirectory(path, videoFilesFormat);
     }
 
+    public File[] readSystemArguments(List<String> files){
+        List<String> formats = getMediaFormats();
+        return files.stream().map(File::new).filter(file -> file.isFile()).filter(file -> {
+            String[] tmp = file.getName().toLowerCase().split("\\.");
+            var ext = tmp[tmp.length - 1];
+            return formats.contains(ext);
+        }).toArray(File[]::new);
+    }
+
     public File[] readMediaDirectory(File path){
-        List<String> newList = new ArrayList<>();
-        newList.addAll(audioFilesFormat);
-        newList.addAll(videoFilesFormat);
-        return readDirectory(path, newList);
+        return readDirectory(path, getMediaFormats());
     }
 
     private File[] readDirectory(File path, List<String> match){
@@ -55,5 +61,12 @@ public class HomeModel {
             String ext = fls[fls.length - 1];
             return match.contains(ext);
         });
+    }
+
+    private List<String> getMediaFormats() {
+        List<String> newList = new ArrayList<>();
+        newList.addAll(audioFilesFormat);
+        newList.addAll(videoFilesFormat);
+        return newList;
     }
 }

@@ -5,6 +5,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
@@ -21,16 +22,18 @@ public class Drawer extends VBox {
     private float widthPercent;
 
     private ListView<String> list;
+    private Label totalDuration;
 
     public Drawer(StackPane parent, float widthPercent){
         this.parent = parent;
         this.widthPercent = widthPercent;
-
         setOpacity(0.8);
+
+        totalDuration = new Label("Total Duration: ");
+        totalDuration.setId("total_duration");
+        getChildren().add(totalDuration);
+
         list = new ListView<>();
-        list.getItems().add("hello world");
-        list.getItems().add("bad idea");
-        list.getItems().add("hey man");
         getChildren().add(list);
 
         setSize();
@@ -82,6 +85,14 @@ public class Drawer extends VBox {
 
     public boolean isHidden(){
         return hidden;
+    }
+
+    public void addItem(String item){
+        list.getItems().add(item);
+    }
+
+    public Label getTotalDuration(){
+        return totalDuration;
     }
 
 }

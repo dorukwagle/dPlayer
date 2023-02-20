@@ -133,3 +133,13 @@
           linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
           -track-color;
 }
+
+.list-cell:selected:filled:hover {
+  -fx-view-order: -1;
+  -fx-effect: dropshadow(gaussian, #67676D, 12, 0.05, 0.0, 2);
+}
+
+.total_duration{
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}
