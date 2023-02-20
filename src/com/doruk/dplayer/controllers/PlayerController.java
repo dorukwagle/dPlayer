@@ -10,14 +10,20 @@ import com.doruk.dplayer.views.MenuBar;
 import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
 
 import javafx.scene.control.MenuItem;
+import uk.co.caprica.vlcj.binding.lib.LibX11;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
+import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+import uk.co.caprica.vlcj.media.callback.CallbackMedia;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
@@ -88,32 +94,84 @@ public class PlayerController implements Controllers {
         updatePlayList();
     }
 
-    private void updatePlayList(){
+//    private void updatePlayList(){
+//        Platform.runLater( () -> {
+//            LibX11.INSTANCE.XInitThreads();
+//            MediaPlayerFactory factory = new MediaPlayerFactory();
+//            EmbeddedMediaPlayer player = factory.mediaPlayers().newEmbeddedMediaPlayer();
+//            ImageView img = new ImageView();
+//            ImageViewVideoSurface surface = new ImageViewVideoSurface(img);
+//            player.videoSurface().set(surface);
+//
+//            long totalDur = 0;
+//            for (int i = 0; i < mediaList.length; i++) {
+//                long mediaDur = 0;
+//
+//                player.media().startPaused(mediaList[i].getAbsolutePath());
+////                player.media().play(mediaList[i].getAbsolutePath());
+//                mediaDur = player.status().length();
+//                totalDur += mediaDur;
+//                String fileName = mediaList[i].getName();
+//                drawer.addItem(
+//                        (i + 1) + "> " +
+//                                (fileName.length() > 30? fileName.substring(0, 30): fileName) + "..." +
+//                                " | " + millisToDuration(mediaDur)
+//                );
+//            }
+//            drawer.getTotalDuration().setText("Total Duration: " + millisToDuration(totalDur));
+//            player.controls().stop();
+//        });
+//    }
 
-        CompletableFuture.runAsync(() -> {
-            long totalDur = 0;
+    private void updatePlayList(){
+        CompletableFuture.runAsync( () -> {
+            LibX11.INSTANCE.XInitThreads();
             MediaPlayerFactory factory = new MediaPlayerFactory();
             EmbeddedMediaPlayer player = factory.mediaPlayers().newEmbeddedMediaPlayer();
-            for (int i = 0; i < mediaList.length; i++){
+            ImageView img = new ImageView();
+            ImageViewVideoSurface surface = new ImageViewVideoSurface(img);
+            player.videoSurface().set(surface);
+
+            long totalDur = 0;
+            for (int i = 0; i < mediaList.length; i++) {
                 long mediaDur = 0;
+
                 player.media().startPaused(mediaList[i].getAbsolutePath());
+//                player.media().play(mediaList[i].getAbsolutePath());
                 mediaDur = player.status().length();
                 totalDur += mediaDur;
-                drawer.addItem(
-                        (i+1) + "> " +
-                        mediaList[i].getName().substring(0, 50) + "..." +
-                        " | " + millisToDuration(mediaDur)
+                String fileName = mediaList[i].getName();
+                final int finalI = i;
+                String duration = millisToDuration(mediaDur);
+                Platform.runLater(() ->
+                        drawer.addItem(
+                                (finalI + 1) + "> " +
+                                        (fileName.length() > 30? fileName.substring(0, 30): fileName) + "..." +
+                                        " | " + duration
+                        )
                 );
+
             }
-            drawer.getTotalDuration().setText("Total Duration: " + totalDur);
+            String totalDuration = millisToDuration(totalDur);
+            Platform.runLater(() ->
+                drawer.getTotalDuration().setText("Total Duration: " + totalDuration)
+
+            );
+
+            player.controls().stop();
         });
     }
 
-    private String millisToDuration(long millis){
-        long hours = millis /= (60 * 60 * 1000);  // convert to hours
-        long minutes = millis /= (60 * 1000); // convert to minutes
-        long seconds = millis /= 1000; // convert to seconds
-        return hours + ":" + millis + ":" + seconds;
+    private String millisToDuration(long dur){
+        long millis = dur;
+        long hours = millis / (60 * 60 * 1000);  // convert to hours
+        millis %= (60 * 60 * 1000);
+        long minutes = millis / (60 * 1000); // convert to minutes
+        millis %= (60 * 1000);
+        long seconds = millis / 1000; // convert to seconds
+        return (hours/10 > 1? hours: "0"+hours) + ":" +
+                (minutes/10 > 1? minutes: "0"+minutes) + ":" +
+                (seconds/10 > 1? seconds: "0"+seconds);
     }
 
     @Override

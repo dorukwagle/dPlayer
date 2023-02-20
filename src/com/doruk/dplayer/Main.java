@@ -3,6 +3,7 @@ package com.doruk.dplayer;
 import com.doruk.dplayer.controllers.NavigationController;
 import com.doruk.dplayer.views.BaseContainer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 
 

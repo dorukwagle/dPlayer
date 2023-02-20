@@ -22,7 +22,7 @@ public class PlayerView extends BorderPane {
         setCenter(playerHolder);
 
         playerHolder.setBackground(Background.fill(Paint.valueOf("black")));
-        drawer = new Drawer(playerHolder, 0.25f);
+        drawer = new Drawer(playerHolder, 0.4f);
 
         playerHolder.getChildren().add(mediaView);
         StackPane.setAlignment(mediaView, Pos.CENTER);
