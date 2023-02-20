@@ -1,6 +1,7 @@
 package com.doruk.dplayer.models;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,23 +32,28 @@ public class HomeModel {
     }
 
     public File[] readAudioDirectory(File path){
-        if (path == null)
-            return null;
-        return path.listFiles((dir, fileName) -> {
-            String[] fls = fileName.toLowerCase().split("\\.");
-            String ext = fls[fls.length - 1];
-            return audioFilesFormat.contains(ext);
-        });
+        return readDirectory(path, audioFilesFormat);
     }
 
 
     public File[] readVideoDirectory(File path){
+        return readDirectory(path, videoFilesFormat);
+    }
+
+    public File[] readMediaDirectory(File path){
+        List<String> newList = new ArrayList<>();
+        newList.addAll(audioFilesFormat);
+        newList.addAll(videoFilesFormat);
+        return readDirectory(path, newList);
+    }
+
+    private File[] readDirectory(File path, List<String> match){
         if(path == null)
             return null;
         return path.listFiles((dir, fileName) -> {
             String[] fls = fileName.toLowerCase().split("\\.");
             String ext = fls[fls.length - 1];
-            return videoFilesFormat.contains(ext);
+            return match.contains(ext);
         });
     }
 }
