@@ -30,7 +30,9 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerController implements Controllers {
@@ -99,58 +101,29 @@ public class PlayerController implements Controllers {
         updatePlayList();
     }
 
-//    private void updatePlayList(){
-//        Platform.runLater( () -> {
-//            LibX11.INSTANCE.XInitThreads();
-//            MediaPlayerFactory factory = new MediaPlayerFactory();
-//            EmbeddedMediaPlayer player = factory.mediaPlayers().newEmbeddedMediaPlayer();
-//            ImageView img = new ImageView();
-//            ImageViewVideoSurface surface = new ImageViewVideoSurface(img);
-//            player.videoSurface().set(surface);
-//
-//            long totalDur = 0;
-//            for (int i = 0; i < mediaList.length; i++) {
-//                long mediaDur = 0;
-//
-//                player.media().startPaused(mediaList[i].getAbsolutePath());
-////                player.media().play(mediaList[i].getAbsolutePath());
-//                mediaDur = player.status().length();
-//                totalDur += mediaDur;
-//                String fileName = mediaList[i].getName();
-//                drawer.addItem(
-//                        (i + 1) + "> " +
-//                                (fileName.length() > 30? fileName.substring(0, 30): fileName) + "..." +
-//                                " | " + millisToDuration(mediaDur)
-//                );
-//            }
-//            drawer.getTotalDuration().setText("Total Duration: " + millisToDuration(totalDur));
-//            player.controls().stop();
-//        });
-//    }
-
     private void updatePlayList(){
         CompletableFuture.runAsync(() -> {
             final long[] totalDur = {0};
             final int[] count = {0};
+            List<String> playList = new ArrayList<>();
             for (File file : mediaList) {
                 EmbeddedMediaPlayerComponent player = new EmbeddedMediaPlayerComponent();
 
                 player.mediaPlayer().media().prepare(file.getAbsolutePath());
                 final boolean[] parsed = {false};
+                count[0]++;
                 player.mediaPlayer().media().events().addMediaEventListener(new MediaEventAdapter() {
                     @Override
                     public void mediaParsedChanged(Media media, MediaParsedStatus status) {
-                        count[0]++;
                         long mediaDur = media.info().duration();
                         totalDur[0] += mediaDur;
                         String fileName = media.meta().get(Meta.TITLE);
                         String duration = millisToDuration(mediaDur);
-                        Platform.runLater(() ->
-                                drawer.addItem(
-                                        count[0] + "> " +
-                                                (fileName.length() > 35 ? fileName.substring(0, 35) + "..." : fileName) +
-                                                " | " + duration
-                                )
+
+                        playList.add(
+                                count[0] + "> " +
+                                        (fileName.length() > 35 ? fileName.substring(0, 35) + "..." : fileName) +
+                                        " | " + duration
                         );
                         parsed[0] = status.toString().equals("DONE");
                         player.release();
@@ -166,8 +139,10 @@ public class PlayerController implements Controllers {
                 }
             }
             String totalDuration = millisToDuration(totalDur[0]);
-            Platform.runLater(() ->
-                    drawer.getTotalDuration().setText("Total Duration: " + totalDuration)
+            Platform.runLater(() -> {
+                        playList.forEach(item -> drawer.addItem(item));
+                        drawer.getTotalDuration().setText("Total Duration: " + totalDuration);
+                    }
             );
         });
     }
