@@ -20,7 +20,12 @@ import javafx.scene.control.MenuItem;
 import uk.co.caprica.vlcj.binding.lib.LibX11;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.media.callback.CallbackMedia;
+import uk.co.caprica.vlcj.player.base.MediaApi;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaListPlayerComponent;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.player.component.MediaPlayerComponent;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.*;
@@ -124,41 +129,46 @@ public class PlayerController implements Controllers {
 //    }
 
     private void updatePlayList(){
-        CompletableFuture.runAsync( () -> {
-            LibX11.INSTANCE.XInitThreads();
-            MediaPlayerFactory factory = new MediaPlayerFactory();
-            EmbeddedMediaPlayer player = factory.mediaPlayers().newEmbeddedMediaPlayer();
-            ImageView img = new ImageView();
-            ImageViewVideoSurface surface = new ImageViewVideoSurface(img);
-            player.videoSurface().set(surface);
+        CompletableFuture.runAsync(() -> {
+            final long[] totalDur = {0};
+            final int[] count = {0};
+            for (File file : mediaList) {
+                EmbeddedMediaPlayerComponent player = new EmbeddedMediaPlayerComponent();
 
-            long totalDur = 0;
-            for (int i = 0; i < mediaList.length; i++) {
-                long mediaDur = 0;
-
-                player.media().startPaused(mediaList[i].getAbsolutePath());
-//                player.media().play(mediaList[i].getAbsolutePath());
-                mediaDur = player.status().length();
-                totalDur += mediaDur;
-                String fileName = mediaList[i].getName();
-                final int finalI = i;
-                String duration = millisToDuration(mediaDur);
-                Platform.runLater(() ->
-                        drawer.addItem(
-                                (finalI + 1) + "> " +
-                                        (fileName.length() > 30? fileName.substring(0, 30): fileName) + "..." +
-                                        " | " + duration
-                        )
-                );
-
+                player.mediaPlayer().media().prepare(file.getAbsolutePath());
+                final boolean[] parsed = {false};
+                player.mediaPlayer().media().events().addMediaEventListener(new MediaEventAdapter() {
+                    @Override
+                    public void mediaParsedChanged(Media media, MediaParsedStatus status) {
+                        count[0]++;
+                        long mediaDur = media.info().duration();
+                        totalDur[0] += mediaDur;
+                        String fileName = media.meta().get(Meta.TITLE);
+                        String duration = millisToDuration(mediaDur);
+                        Platform.runLater(() ->
+                                drawer.addItem(
+                                        count[0] + "> " +
+                                                (fileName.length() > 35 ? fileName.substring(0, 35) + "..." : fileName) +
+                                                " | " + duration
+                                )
+                        );
+                        parsed[0] = status.toString().equals("DONE");
+                        player.release();
+                    }
+                });
+                var a = player.mediaPlayer().media().parsing().parse(ParseFlag.PARSE_LOCAL);
+                while (!parsed[0]) {
+                    try {
+                        Thread.sleep(2);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
-            String totalDuration = millisToDuration(totalDur);
+            String totalDuration = millisToDuration(totalDur[0]);
             Platform.runLater(() ->
-                drawer.getTotalDuration().setText("Total Duration: " + totalDuration)
-
+                    drawer.getTotalDuration().setText("Total Duration: " + totalDuration)
             );
-
-            player.controls().stop();
         });
     }
 
