@@ -83,7 +83,7 @@ public class ResourceProvider {
     public String getCssFile(){
         String path = "";
         if(preferences.isLightThemeChecked())
-            path = "";
+            path = "/assets/normal_theme.css";
         else
             path = "/assets/dark_theme_adv.css";
         return this.getClass().getResource(path).toString();

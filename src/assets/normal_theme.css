@@ -1,0 +1,62 @@
+.heading {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 25;
+}
+
+.menu, .menu-item{
+    -fx-cursor: hand;
+}
+
+.menu:hover, .menu:showing{
+    -fx-background-color: gray;
+}
+
+.menu-item:hover{
+    -fx-background: gray;
+}
+
+
+.shortcut_keys_holder{
+    -fx-text-fill: white;
+    -fx-font-style: italic;
+    -fx-border-color: black;
+    -fx-cursor: hand;
+    -fx-font-size: 15;
+}
+
+.tool-bar {
+    -fx-spacing: 20px;
+}
+
+.shortcut_keys_holder:hover{
+    -fx-text-fill: lightgray;
+    -fx-background-color: gray;
+}
+
+.button:hover{
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.slider {
+    -fx-cursor: hand;
+    -default-track-color: -fx-control-inner-background;
+    -track-color: -default-track-color ;
+}
+
+.slider .track {
+    -fx-background-color: -fx-shadow-highlight-color,
+          linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
+          -track-color;
+}
+
+.list-cell:selected:filled:hover {
+  -fx-view-order: -1;
+  -fx-effect: dropshadow(gaussian, #67676D, 12, 0.05, 0.0, 2);
+}
+
+.total_duration{
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+}

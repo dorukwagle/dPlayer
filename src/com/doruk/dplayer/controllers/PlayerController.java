@@ -83,6 +83,7 @@ public class PlayerController implements Controllers {
             }
         });
 
+        drawer.setOnClick((index, listItem) -> System.out.println(index + ": " + mediaList[index]));
     }
 
     public PlayerController(Parameters params) {
@@ -105,7 +106,7 @@ public class PlayerController implements Controllers {
         CompletableFuture.runAsync(() -> {
             final long[] totalDur = {0};
             final int[] count = {0};
-            List<String> playList = new ArrayList<>();
+            List<String[]> playList = new ArrayList<>();
             for (File file : mediaList) {
                 EmbeddedMediaPlayerComponent player = new EmbeddedMediaPlayerComponent();
 
@@ -120,11 +121,8 @@ public class PlayerController implements Controllers {
                         String fileName = media.meta().get(Meta.TITLE);
                         String duration = millisToDuration(mediaDur);
 
-                        playList.add(
-                                count[0] + "> " +
-                                        (fileName.length() > 35 ? fileName.substring(0, 35) + "..." : fileName) +
-                                        " | " + duration
-                        );
+                        playList.add(new String[]{String.valueOf(count[0]) , fileName, duration});
+
                         parsed[0] = status.toString().equals("DONE");
                         player.release();
                     }
@@ -155,8 +153,8 @@ public class PlayerController implements Controllers {
         millis %= (60 * 1000);
         long seconds = millis / 1000; // convert to seconds
         return (hours/10 > 1? hours: "0"+hours) + ":" +
-                (minutes/10 > 1? minutes: "0"+minutes) + ":" +
-                (seconds/10 > 1? seconds: "0"+seconds);
+                (minutes/10 > 0? minutes: "0"+minutes) + ":" +
+                (seconds/10 > 0? seconds: "0"+seconds);
     }
 
     @Override

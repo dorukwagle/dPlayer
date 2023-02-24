@@ -22,8 +22,10 @@ public class HomeView extends StackPane {
     private final Button btnPreferences;
     private final Button btnChooseFile;
     private final Button btnChooseAudioDir, btnChooseVideoDir;
+    ResourceProvider icons;
 
     public HomeView() {
+        icons = new ResourceProvider();
         // add the toolbar
         setAlignment(Pos.TOP_CENTER);
         VBox bar = new VBox();
@@ -32,12 +34,7 @@ public class HomeView extends StackPane {
         HBox.setHgrow(space, Priority.SOMETIMES);
         // add button to the toolbar
         btnPreferences = new Button("Preferences");
-        Image img = new Image(this.getClass().getResourceAsStream("/res/settings_icon_white.png"));
-        ImageView imageView = new ImageView(img);
-        imageView.setPreserveRatio(true);
-        imageView.setFitHeight(20);
-        imageView.setFitWidth(20);
-        btnPreferences.setGraphic(imageView);
+        btnPreferences.setGraphic(icons.getIcon("settings_icon", 20, 20));
         toolBar.getItems().addAll(space, btnPreferences);
         bar.getChildren().add(toolBar);
         bar.setMaxHeight(toolBar.getHeight());
@@ -85,7 +82,6 @@ public class HomeView extends StackPane {
 
 
     private Button createIconBtn(String icon, int width, int height){
-        ResourceProvider icons = new ResourceProvider();
         var img = icons.getIcon(icon, width, height);
         Button btn = new Button();
         btn.setGraphic(img);
