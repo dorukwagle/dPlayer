@@ -11,27 +11,16 @@ import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.image.ImageView;
-
 import javafx.scene.control.MenuItem;
-import uk.co.caprica.vlcj.binding.lib.LibX11;
-import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
-import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
+import javafx.scene.image.ImageView;
 import uk.co.caprica.vlcj.media.*;
-import uk.co.caprica.vlcj.media.callback.CallbackMedia;
-import uk.co.caprica.vlcj.player.base.MediaApi;
-import uk.co.caprica.vlcj.player.component.EmbeddedMediaListPlayerComponent;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.component.MediaPlayerComponent;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import javax.swing.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,6 +33,7 @@ public class PlayerController implements Controllers {
     private final MenuBar menuBar;
     private final Scene scene;
     private File[] mediaList;
+    private int currentPlaylistPosition = 0;
 
     public PlayerController(){
         ResourceProvider icons = new ResourceProvider();
@@ -55,14 +45,6 @@ public class PlayerController implements Controllers {
         drawer = playerView.getDrawer();
         scene = new Scene(playerView);
 
-//        try {
-//            mediaPlayer.load("/home/doruk/Downloads/Video/test3.mkv");
-////            mediaPlayer.load("/home/doruk/Downloads/Video/song.mp4");
-////            mediaPlayer.load("/data/Movies/Gangster_(2022)_Hindi_Dubbed_720p.mp4");
-//        } catch (FileNotFoundException e) {
-//            System.out.println(e.toString());
-//        }
-
         controlPanel.getDrawerBtn().setOnAction(e -> {
             var check = drawer.isHidden();
             if (!check) {
@@ -72,18 +54,14 @@ public class PlayerController implements Controllers {
             }
         });
 
-        // fit the media player height to the screen
-        CompletableFuture.runAsync(()->{
-            try {
-                Thread.sleep(500);
-                float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
-                mediaPlayer.setHeight(height);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        adjustPlayerSize();
 
-        drawer.setOnClick((index, listItem) -> System.out.println(index + ": " + mediaList[index]));
+        drawer.setOnClick((index, listItem) -> {
+                playMedia(mediaList[index].getAbsolutePath());
+                currentPlaylistPosition = ++index;
+            }
+        );
+        mediaPlayer.setOnComplete(this::playMedia);
     }
 
     public PlayerController(Parameters params) {
@@ -101,6 +79,51 @@ public class PlayerController implements Controllers {
         this.mediaList = params;
         updatePlayList();
     }
+
+    private void adjustPlayerSize(){
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(500);
+                // fit the media player height to the screen
+                float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
+                mediaPlayer.setHeight(height);
+                playMedia();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void playMedia(String filename){
+        if(filename == null)
+            return;
+        mediaPlayer.load(filename);
+        mediaPlayer.play();
+    }
+
+    private void playMedia(){
+        playMedia(getNextMedia());
+    }
+
+    private String getNextMedia(){
+//        currentPlaylistPosition = (currentPlaylistPosition + 1) % mediaList.length;
+        if(currentPlaylistPosition == mediaList.length)
+            return null;
+        return getMediaFromList(currentPlaylistPosition++);
+    }
+
+    private String getPreviousMedia(){
+        if(currentPlaylistPosition < 0)
+            return null;
+        return getMediaFromList(currentPlaylistPosition--);
+    }
+
+    private String getMediaFromList(int position){
+        drawer.selectItem(position);
+        return mediaList[position].getAbsolutePath();
+    }
+
+
 
     private void updatePlayList(){
         CompletableFuture.runAsync(() -> {

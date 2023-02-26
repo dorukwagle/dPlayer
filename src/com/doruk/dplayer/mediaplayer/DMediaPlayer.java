@@ -1,6 +1,8 @@
 package com.doruk.dplayer.mediaplayer;
 
+import com.doruk.dplayer.contracts.MediaPlayCompleted;
 import com.doruk.dplayer.contracts.MediaPlayerInterface;
+import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -11,9 +13,8 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.concurrent.CompletableFuture;
 
 
 public class DMediaPlayer implements MediaPlayerInterface {
@@ -21,7 +22,9 @@ public class DMediaPlayer implements MediaPlayerInterface {
     private ImageView mediaView;
     private final MediaPlayerFactory mediaPlayerFactory;
 
-    private final EmbeddedMediaPlayer embeddedMediaPlayer;
+    private EmbeddedMediaPlayer embeddedMediaPlayer;
+    private MediaPlayCompleted onComplete;
+
 
     public DMediaPlayer() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
@@ -29,7 +32,7 @@ public class DMediaPlayer implements MediaPlayerInterface {
         this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
             @Override
             public void playing(MediaPlayer mediaPlayer) {
-//                super.playing(mediaPlayer);
+                super.playing(mediaPlayer);
             }
 
             @Override
@@ -38,6 +41,13 @@ public class DMediaPlayer implements MediaPlayerInterface {
 
             @Override
             public void stopped(MediaPlayer mediaPlayer) {
+            }
+
+            @Override
+            public void finished(MediaPlayer mediaPlayer){
+                if(onComplete == null)
+                    return;
+                Platform.runLater(onComplete::onComplete);
             }
 
             @Override
@@ -53,8 +63,9 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public void load(String filePath) throws FileNotFoundException {
-        embeddedMediaPlayer.media().startPaused(filePath);
+    public void load(String filePath) {
+        embeddedMediaPlayer.media().play(filePath);
+        embeddedMediaPlayer.controls().pause();
         embeddedMediaPlayer.controls().setPosition(0f);
     }
 
@@ -134,8 +145,8 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public void setOnComplete(Consumer<Object> function) {
-
+    public void setOnComplete(MediaPlayCompleted function) {
+        onComplete = function;
     }
 
     @Override
