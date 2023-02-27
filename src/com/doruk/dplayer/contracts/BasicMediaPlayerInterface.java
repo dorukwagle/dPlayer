@@ -14,6 +14,7 @@ public interface BasicMediaPlayerInterface {
     void play();
     void pause();
     void stop();
+    boolean isPaused();
     void seek(int seconds); // play from the given position in seconds
     int getCurrentTime(); // return current playing position in seconds
     void seekForward(int seconds); // fast-forward the video by given seconds

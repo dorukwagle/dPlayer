@@ -161,10 +161,14 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public int getVolume() {
-        return 0;
+    public int getVolume(){
+        return volume;
     }
 
+    @Override
+    public boolean isPaused(){
+        return !embeddedMediaPlayer.status().isPlaying();
+    }
     @Override
     public void setOnComplete(MediaPlayCompleted function) {
         onComplete = function;

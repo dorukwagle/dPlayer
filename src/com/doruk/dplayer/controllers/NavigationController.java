@@ -93,6 +93,7 @@ public class NavigationController {
         controller.getStopButton().setOnAction(event -> {
             views.push(controllers.get("home"));
             this.stage.setScene(getScene("home"));
+            ((PlayerController)controllers.get("player")).onStop();
         });
     }
 
