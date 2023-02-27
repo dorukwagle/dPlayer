@@ -25,6 +25,8 @@ public class PreferencesManager {
         pref.putLong("shortJumpDuration", 5); // seconds
         pref.putLong("mediumJumpDuration", 10);
         pref.putLong("longJumpDuration", 40);
+
+        pref.putLong("volume", 25);
     }
 
     public boolean isLightThemeChecked(){
@@ -73,5 +75,21 @@ public class PreferencesManager {
 
     public void setLongJumpDuration(long length){
         pref.putLong("longJumpDuration", length);
+    }
+
+    public void setResumePosition(String filename, long position){
+        pref.putLong(filename, position);
+    }
+
+    public long getResumePosition(String filename){
+        return pref.getLong(filename, 0);
+    }
+
+    public int getVolume(){
+        return pref.getInt("volume", 25);
+    }
+
+    public void setVolume(int volume){
+        pref.putInt("volume", volume);
     }
 }

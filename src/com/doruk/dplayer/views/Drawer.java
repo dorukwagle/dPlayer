@@ -187,4 +187,12 @@ public class Drawer extends VBox {
     public void setSelectedColor(String selectedColor) {
         this.selectedColor = selectedColor;
     }
+
+    public String[] getSelectedItem(){
+        return new String[] {
+                ((Label) lastClickedItem.getChildren().get(0)).getText(),
+                ((Label) lastClickedItem.getChildren().get(1)).getText(),
+                ((Label) lastClickedItem.getChildren().get(2)).getText()
+            };
+    }
 }

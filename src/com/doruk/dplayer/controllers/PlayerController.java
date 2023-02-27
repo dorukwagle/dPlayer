@@ -4,6 +4,7 @@ import com.doruk.dplayer.contracts.Controllers;
 import com.doruk.dplayer.contracts.MediaPlayerInterface;
 import com.doruk.dplayer.mediaplayer.DMediaPlayer;
 import com.doruk.dplayer.models.HomeModel;
+import com.doruk.dplayer.utilities.PreferencesManager;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import com.doruk.dplayer.views.Drawer;
 import com.doruk.dplayer.views.MenuBar;
@@ -11,6 +12,10 @@ import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
@@ -33,9 +38,12 @@ public class PlayerController implements Controllers {
     private File[] mediaList;
     private int currentPlaylistPosition = 0;
     private Dimension playerViewDimensions;
+    private PreferencesManager preference;
 
     public PlayerController(){
         ResourceProvider icons = new ResourceProvider();
+        preference = new PreferencesManager();
+
         mediaPlayer = new DMediaPlayer();
         mediaView = mediaPlayer.getMediaView();
         menuBar = new MenuBar(icons);
@@ -62,6 +70,8 @@ public class PlayerController implements Controllers {
         mediaPlayer.setOnComplete(this::playMedia);
 
         getPlayerViewDimensions();
+        addControlPanelEventListeners();
+        addMenuBarEventListeners();
     }
 
     public PlayerController(Parameters params) {
@@ -115,6 +125,10 @@ public class PlayerController implements Controllers {
         mediaPlayer.load(filename);
         mediaPlayer.play();
         mediaPlayer.setFitToScreen(playerViewDimensions);
+        long resume = getResumeDuration(filename);
+        if(resume > 0)
+            mediaPlayer.setTime(resume);
+        mediaPlayer.setVolume(preference.getVolume());
     }
 
     private void playMedia(){
@@ -139,7 +153,35 @@ public class PlayerController implements Controllers {
         return mediaList[position].getAbsolutePath();
     }
 
+    private void addControlPanelEventListeners(){
+        controlPanel.getPlayPause().setOnAction(event -> {
 
+        });
+
+        controlPanel.getPreviousBtn().setOnAction(event -> {});
+
+        controlPanel.getStopBtn().setOnAction(event -> {});
+
+        controlPanel.getNextBtn().setOnAction(event -> {});
+
+        controlPanel.getAudioBtn().setOnAction(event -> {});
+
+
+        var volumeSlider = controlPanel.getVolumeSlider();
+        var volumeLabel = controlPanel.getVolumeLabel();
+        // update slider position
+        volumeSlider.setValue(preference.getVolume());
+        volumeLabel.setText(preference.getVolume()+"%");
+        volumeSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            volumeLabel.setText(newValue.intValue() + "%");
+            mediaPlayer.setVolume(newValue.intValue());
+            preference.setVolume(newValue.intValue());
+        });
+    }
+
+    private void addMenuBarEventListeners(){
+
+    }
 
     private void updatePlayList(){
         CompletableFuture.runAsync(() -> {
@@ -194,6 +236,17 @@ public class PlayerController implements Controllers {
         return (hours/10 > 1? hours: "0"+hours) + ":" +
                 (minutes/10 > 0? minutes: "0"+minutes) + ":" +
                 (seconds/10 > 0? seconds: "0"+seconds);
+    }
+
+    private long getResumeDuration(String filename){
+        if(preference.isResumePlayback()){
+            var time = drawer.getSelectedItem()[2];
+            String[] durs = time.split("\\.");
+            long duration = (Long.parseLong(durs[0]) * 60 * 60) + (Long.parseLong(durs[1]) * 60) + Long.parseLong(durs[2]);
+            if(duration >= preference.getResumePlaybackLength())
+                return preference.getResumePosition(filename);
+        }
+        return 0;
     }
 
     @Override

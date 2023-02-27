@@ -15,11 +15,12 @@ public interface BasicMediaPlayerInterface {
     void pause();
     void stop();
     void seek(int seconds); // play from the given position in seconds
-    int getCurrentPosition(); // return current playing position in seconds
+    int getCurrentTime(); // return current playing position in seconds
     void seekForward(int seconds); // fast-forward the video by given seconds
     void seekBackward(int second); // fast-backward ''
     void setVolume(int volume);
     int getVolume();
+    void setTime(long time);
     void setOnComplete(MediaPlayCompleted mediaPlayCompleted);
     void setFullScreen(Stage stage);
     void setFitToScreen(Dimension dimension); // whether to resize the video during start up

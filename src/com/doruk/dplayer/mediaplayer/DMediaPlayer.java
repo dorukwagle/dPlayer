@@ -26,6 +26,7 @@ public class DMediaPlayer implements MediaPlayerInterface {
     private MediaPlayCompleted onComplete;
 
     private Dimension fitScreen;
+    private int volume = 0;
 
 
     public DMediaPlayer() {
@@ -36,6 +37,8 @@ public class DMediaPlayer implements MediaPlayerInterface {
             public void playing(MediaPlayer mediaPlayer) {
                 if(fitScreen != null)
                     scaleToScreen(fitScreen);
+                if(volume > 0)
+                    setVolume(volume);
             }
 
             @Override
@@ -132,23 +135,29 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public int getCurrentPosition() {
+    public int getCurrentTime() {
         return 0;
     }
 
     @Override
     public void seekForward(int seconds) {
-
+        embeddedMediaPlayer.controls().skipTime(seconds);
     }
 
     @Override
     public void seekBackward(int second) {
+        embeddedMediaPlayer.controls().skipTime(-second);
+    }
 
+    @Override
+    public void setTime(long seconds){
+        embeddedMediaPlayer.controls().setTime(seconds);
     }
 
     @Override
     public void setVolume(int volume) {
-
+        this.volume = volume;
+        embeddedMediaPlayer.audio().setVolume(volume);
     }
 
     @Override
