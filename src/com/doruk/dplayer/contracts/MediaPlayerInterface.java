@@ -1,5 +1,6 @@
 package com.doruk.dplayer.contracts;
 
+import java.awt.*;
 import java.util.List;
 
 public interface MediaPlayerInterface extends BasicMediaPlayerInterface{
@@ -10,4 +11,5 @@ public interface MediaPlayerInterface extends BasicMediaPlayerInterface{
     void setSubtitle(); // set one of the loaded subtitle either from the video or file
     void loadSubtitleFile(); // set the subtitles from external file
     void setAudioTrack(); // set one of the available audio track
+    void scaleToScreen(Dimension dimension); //
 }

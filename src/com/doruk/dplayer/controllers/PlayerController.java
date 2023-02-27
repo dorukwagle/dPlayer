@@ -18,10 +18,8 @@ import javafx.scene.image.ImageView;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
+import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerController implements Controllers {
@@ -34,6 +32,7 @@ public class PlayerController implements Controllers {
     private final Scene scene;
     private File[] mediaList;
     private int currentPlaylistPosition = 0;
+    private Dimension playerViewDimensions;
 
     public PlayerController(){
         ResourceProvider icons = new ResourceProvider();
@@ -54,7 +53,6 @@ public class PlayerController implements Controllers {
             }
         });
 
-        adjustPlayerSize();
 
         drawer.setOnClick((index, listItem) -> {
                 playMedia(mediaList[index].getAbsolutePath());
@@ -62,6 +60,8 @@ public class PlayerController implements Controllers {
             }
         );
         mediaPlayer.setOnComplete(this::playMedia);
+
+        getPlayerViewDimensions();
     }
 
     public PlayerController(Parameters params) {
@@ -71,23 +71,38 @@ public class PlayerController implements Controllers {
             mediaList = model.readSystemArguments(params.getRaw());
         else
             mediaList = model.readMediaDirectory(new File(params.getRaw().get(0)).getParentFile());
+
         updatePlayList();
+        startPlaying();
     }
 
     public PlayerController(File[] params){
         this();
         this.mediaList = params;
+
         updatePlayList();
+        startPlaying();
     }
 
-    private void adjustPlayerSize(){
+    private void startPlaying(){
+        CompletableFuture.runAsync(() -> {
+            try {
+                Thread.sleep(600);
+                playMedia();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    private void getPlayerViewDimensions(){
         CompletableFuture.runAsync(() -> {
             try {
                 Thread.sleep(500);
                 // fit the media player height to the screen
                 float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
-                mediaPlayer.setHeight(height);
-                playMedia();
+                playerViewDimensions = new Dimension();
+                playerViewDimensions.setSize(playerView.getWidth(), height);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -99,6 +114,7 @@ public class PlayerController implements Controllers {
             return;
         mediaPlayer.load(filename);
         mediaPlayer.play();
+        mediaPlayer.setFitToScreen(playerViewDimensions);
     }
 
     private void playMedia(){
@@ -129,7 +145,7 @@ public class PlayerController implements Controllers {
         CompletableFuture.runAsync(() -> {
             final long[] totalDur = {0};
             final int[] count = {0};
-            List<String[]> playList = new ArrayList<>();
+            String[][] playList = new String[1][1];
             for (File file : mediaList) {
                 EmbeddedMediaPlayerComponent player = new EmbeddedMediaPlayerComponent();
 
@@ -144,7 +160,7 @@ public class PlayerController implements Controllers {
                         String fileName = media.meta().get(Meta.TITLE);
                         String duration = millisToDuration(mediaDur);
 
-                        playList.add(new String[]{String.valueOf(count[0]) , fileName, duration});
+                        playList[0] = new String[]{String.valueOf(count[0]) , fileName, duration};
 
                         parsed[0] = status.toString().equals("DONE");
                         player.release();
@@ -158,13 +174,13 @@ public class PlayerController implements Controllers {
                         throw new RuntimeException(e);
                     }
                 }
+                // add the filename to the drawer
+                Platform.runLater(() -> drawer.addItem(playList[0]));
             }
+
             String totalDuration = millisToDuration(totalDur[0]);
-            Platform.runLater(() -> {
-                        playList.forEach(item -> drawer.addItem(item));
-                        drawer.getTotalDuration().setText("Total Duration: " + totalDuration);
-                    }
-            );
+            Platform.runLater(() -> drawer.getTotalDuration().setText("Total Duration: " + totalDuration));
+
         });
     }
 

@@ -4,6 +4,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
 import java.util.function.Consumer;
 
@@ -20,9 +21,8 @@ public interface BasicMediaPlayerInterface {
     void setVolume(int volume);
     int getVolume();
     void setOnComplete(MediaPlayCompleted mediaPlayCompleted);
-    void setHeight(float height);
-    void setWidth(float width);
     void setFullScreen(Stage stage);
+    void setFitToScreen(Dimension dimension); // whether to resize the video during start up
 
     void setOriginalSize();
 

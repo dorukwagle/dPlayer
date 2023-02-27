@@ -52,9 +52,12 @@ public class Drawer extends VBox {
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         list = new VBox();
         scrollPane.setContent(list);
+        list.setId("drawer_list");
+        setId("drawer");
         getChildren().add(scrollPane);
 
 
+        setOnMouseExited(mouseEvent -> this.hide());
         setSize();
         setVisible(false);
     }

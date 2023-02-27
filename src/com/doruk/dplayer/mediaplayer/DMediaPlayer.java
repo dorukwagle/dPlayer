@@ -25,6 +25,8 @@ public class DMediaPlayer implements MediaPlayerInterface {
     private EmbeddedMediaPlayer embeddedMediaPlayer;
     private MediaPlayCompleted onComplete;
 
+    private Dimension fitScreen;
+
 
     public DMediaPlayer() {
         this.mediaPlayerFactory = new MediaPlayerFactory();
@@ -32,7 +34,8 @@ public class DMediaPlayer implements MediaPlayerInterface {
         this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
             @Override
             public void playing(MediaPlayer mediaPlayer) {
-                super.playing(mediaPlayer);
+                if(fitScreen != null)
+                    scaleToScreen(fitScreen);
             }
 
             @Override
@@ -69,6 +72,27 @@ public class DMediaPlayer implements MediaPlayerInterface {
         embeddedMediaPlayer.controls().setPosition(0f);
     }
 
+    @Override
+    public void scaleToScreen(Dimension dimension){
+        var width = dimension.getWidth();
+        var height = dimension.getHeight();
+        var vdoDimension = embeddedMediaPlayer.video().videoDimension();
+        var vWidth = vdoDimension.getWidth();
+        var vHeight = vdoDimension.getHeight();
+
+        double heightRatio = vHeight / height;
+
+        mediaView.setPreserveRatio(true);
+        if ( vWidth / heightRatio <= width)
+            mediaView.setFitHeight(height);
+        else
+            mediaView.setFitWidth(width);
+    }
+
+    @Override
+    public void setFitToScreen(Dimension dimension){
+        fitScreen = dimension;
+    }
 
     @Override
     public void play(){
@@ -90,18 +114,6 @@ public class DMediaPlayer implements MediaPlayerInterface {
     @Override
     public void seek(int seconds) {
         embeddedMediaPlayer.controls().setPosition(0.1f);
-    }
-
-    @Override
-    public void setWidth(float width){
-        mediaView.setPreserveRatio(true);
-        mediaView.setFitWidth(width);
-    }
-
-    @Override
-    public void setHeight(float height){
-        mediaView.setPreserveRatio(true);
-        mediaView.setFitHeight(height);
     }
 
     @Override
