@@ -1,7 +1,7 @@
 package com.doruk.dplayer.controllers;
 
 import com.doruk.dplayer.contracts.Controllers;
-import com.doruk.dplayer.contracts.MediaPlayerInterface;
+import com.doruk.dplayer.contracts.ExtendedMediaPlayerInterface;
 import com.doruk.dplayer.mediaplayer.DMediaPlayer;
 import com.doruk.dplayer.models.HomeModel;
 import com.doruk.dplayer.utilities.PreferencesManager;
@@ -12,6 +12,7 @@ import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
+import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
@@ -20,11 +21,14 @@ import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerController implements Controllers {
-    private MediaPlayerInterface mediaPlayer;
+    private ExtendedMediaPlayerInterface mediaPlayer;
     private ImageView mediaView;
     private Drawer drawer;
     private final PlayerView playerView;
@@ -58,7 +62,6 @@ public class PlayerController implements Controllers {
             }
         });
 
-
         drawer.setOnClick((index, listItem) -> {
                 playMedia(mediaList[index].getAbsolutePath());
                 currentPlaylistPosition = index;
@@ -69,6 +72,7 @@ public class PlayerController implements Controllers {
         getPlayerViewDimensions();
         addControlPanelEventListeners();
         addMenuBarEventListeners();
+        mediaPlayer.addOnStartEvents(this::monitorPlaybackAndSeekBar);
     }
 
     public PlayerController(Parameters params) {
@@ -96,6 +100,7 @@ public class PlayerController implements Controllers {
             try {
                 Thread.sleep(600);
                 playMedia();
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -121,11 +126,23 @@ public class PlayerController implements Controllers {
             return;
         mediaPlayer.load(filename);
         mediaPlayer.play();
-        mediaPlayer.setFitToScreen(playerViewDimensions);
-        long resume = getResumeDuration(filename);
-        if(resume > 0)
-            mediaPlayer.setTime(resume);
-        mediaPlayer.setVolume(preference.getVolume());
+
+        // adjust video screen size and volume for each video
+        mediaPlayer.addOnStartEvents(() -> {
+            mediaPlayer.scaleToScreen(playerViewDimensions);
+            mediaPlayer.setVolume((int) controlPanel.getVolumeSlider().getValue());
+        });
+        // fetch the subtitles and audio tracks from video and update the menu-bar lists
+        mediaPlayer.addOnStartEvents(this::fetchVideoSubtitles);
+        mediaPlayer.addOnStartEvents(this::fetchAudioTracks);
+
+        // track the video playback and resume if necessary
+        mediaPlayer.addOnStartEvents(() -> {
+            long resume = getResumeDuration(filename);
+            if(resume > 0)
+                mediaPlayer.addOnStartEvents(() -> mediaPlayer.setTime(resume));
+        });
+        mediaPlayer.addOnStartEvents(this::trackPlaybackProgress);
     }
 
     private void playMedia(){
@@ -134,13 +151,13 @@ public class PlayerController implements Controllers {
 
     private String getNextMedia(){
 //        currentPlaylistPosition = (currentPlaylistPosition + 1) % mediaList.length;
-        if(currentPlaylistPosition == mediaList.length)
+        if(currentPlaylistPosition == mediaList.length - 1)
             return null;
         return getMediaFromList(++currentPlaylistPosition);
     }
 
     private String getPreviousMedia(){
-        if(currentPlaylistPosition < 0)
+        if(currentPlaylistPosition == 0)
             return null;
         return getMediaFromList(--currentPlaylistPosition);
     }
@@ -153,13 +170,13 @@ public class PlayerController implements Controllers {
     private void addControlPanelEventListeners(){
         var playPause = controlPanel.getPlayPause();
         playPause.setOnAction(event -> {
-            if(mediaPlayer.isPaused()){
+            if(!mediaPlayer.isPlaying()){
                 mediaPlayer.play();
                 playPause.setGraphic(icons.getIcon("pause_icon", 20, 20));
                 return;
             }
             mediaPlayer.pause();
-            playPause.setGraphic(icons.getIcon("play_icon", 30, 30));
+            playPause.setGraphic(icons.getIcon("play_icon", 25, 25));
         });
 
         var previous = controlPanel.getPreviousBtn();
@@ -167,9 +184,6 @@ public class PlayerController implements Controllers {
 
         var next = controlPanel.getNextBtn();
         next.setOnAction(event -> playMedia(getNextMedia()));
-
-
-
 
         var volumeSlider = controlPanel.getVolumeSlider();
         var volumeLabel = controlPanel.getVolumeLabel();
@@ -198,15 +212,73 @@ public class PlayerController implements Controllers {
 
     }
 
+    private void monitorPlaybackAndSeekBar(){
+        var currentPosition = controlPanel.getCurrentPosition();
+        var remainingPosition = controlPanel.getTotalRemainingPosition();
+
+        var mediaSlider = controlPanel.getSeekBar();
+
+        mediaSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
+            var ratio = totalTime / mediaSlider.getMax();
+            var curTime = (long) (mediaSlider.getValue() * ratio);
+
+            mediaPlayer.setTime(curTime / 1000);
+
+            currentPosition.setText(millisToDuration(curTime));
+            var remainingText = (remainingPosition.getText().charAt(0) == '-' ?
+                    "-" + millisToDuration(totalTime - curTime): drawer.getSelectedItem()[2]);
+            remainingPosition.setText(remainingText);
+        });
+
+        remainingPosition.setOnMouseClicked(mouseEvent -> {
+            if(remainingPosition.getText().charAt(0) == '-') {
+                remainingPosition.setText(drawer.getSelectedItem()[2]);
+                return;
+            }
+            var curTime = durationToMillis(currentPosition.getText());
+            var totalTime = durationToMillis(remainingPosition.getText());
+            remainingPosition.setText("-" + millisToDuration(totalTime - curTime));
+        });
+
+        // set the slider to 0 position when the video starts
+//        mediaSlider.setValue(0);
+    }
+
+    // update the progress bar and timer labels
+    private void trackPlaybackProgress(){
+
+        while(mediaPlayer.isPlaying()){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // if the player is paused, or new media started,  restart the progress tracker
+        mediaPlayer.addOnStartEvents(this::trackPlaybackProgress);
+    }
+
+    private void fetchVideoSubtitles(){
+        var a = mediaPlayer.getSubtitles();
+        System.out.println(a.toString());
+    }
+
+    private void fetchAudioTracks(){
+        var a = mediaPlayer.getAudioTracks();
+        System.out.println(a.toString());
+    }
+
     private void updatePlayList(){
         CompletableFuture.runAsync(() -> {
             final long[] totalDur = {0};
             final int[] count = {0};
-            String[][] playList = new String[1][1];
-            for (File file : mediaList) {
+            List<String[]> playList = new ArrayList<>();
+            for (int i = 0; i < mediaList.length; ++i) {
                 EmbeddedMediaPlayerComponent player = new EmbeddedMediaPlayerComponent();
 
-                player.mediaPlayer().media().prepare(file.getAbsolutePath());
+                player.mediaPlayer().media().prepare(mediaList[i].getAbsolutePath());
                 final boolean[] parsed = {false};
                 count[0]++;
                 player.mediaPlayer().media().events().addMediaEventListener(new MediaEventAdapter() {
@@ -217,7 +289,7 @@ public class PlayerController implements Controllers {
                         String fileName = media.meta().get(Meta.TITLE);
                         String duration = millisToDuration(mediaDur);
 
-                        playList[0] = new String[]{String.valueOf(count[0]) , fileName, duration};
+                        playList.add(new String[]{String.valueOf(count[0]) , fileName, duration});
 
                         parsed[0] = status.toString().equals("DONE");
                         player.release();
@@ -232,12 +304,13 @@ public class PlayerController implements Controllers {
                     }
                 }
                 // add the filename to the drawer
-                Platform.runLater(() -> drawer.addItem(playList[0]));
+                int ii = i;
+                Platform.runLater(() -> drawer.addItem(playList.get(ii)));
+//                drawer.addItem(playList[0]);
             }
 
             String totalDuration = millisToDuration(totalDur[0]);
             Platform.runLater(() -> drawer.getTotalDuration().setText("Total Duration: " + totalDuration));
-
         });
     }
 
@@ -253,11 +326,18 @@ public class PlayerController implements Controllers {
                 (seconds/10 > 0? seconds: "0"+seconds);
     }
 
+    private long durationToMillis(String dur){
+        String[] durs = dur.split(":");
+        var hrs = Long.parseLong(durs[0]) * 60 * 60;
+        var min = Long.parseLong(durs[1]) * 60;
+        var sec = Long.parseLong(durs[2]);
+        return (hrs + min + sec) * 1000;
+    }
+
     private long getResumeDuration(String filename){
         if(preference.isResumePlayback()){
             var time = drawer.getSelectedItem()[2];
-            String[] durs = time.split(":");
-            long duration = (Long.parseLong(durs[0]) * 60 * 60) + (Long.parseLong(durs[1]) * 60) + Long.parseLong(durs[2]);
+            var duration = durationToMillis(drawer.getSelectedItem()[2]) / 1000;
             if(duration >= preference.getResumePlaybackLength())
                 return preference.getResumePosition(filename);
         }

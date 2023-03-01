@@ -1,7 +1,8 @@
 package com.doruk.dplayer.mediaplayer;
 
+import com.doruk.dplayer.contracts.ExtendedMediaPlayerInterface;
 import com.doruk.dplayer.contracts.MediaPlayCompleted;
-import com.doruk.dplayer.contracts.MediaPlayerInterface;
+import com.doruk.dplayer.contracts.OnPlaybackStart;
 import javafx.application.Platform;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -10,14 +11,16 @@ import uk.co.caprica.vlcj.javafx.fullscreen.JavaFXFullScreenStrategy;
 import uk.co.caprica.vlcj.javafx.videosurface.ImageViewVideoSurface;
 import uk.co.caprica.vlcj.player.base.MediaPlayer;
 import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
+import uk.co.caprica.vlcj.player.base.TrackDescription;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 
-public class DMediaPlayer implements MediaPlayerInterface {
+public class DMediaPlayer implements ExtendedMediaPlayerInterface {
 
     private ImageView mediaView;
     private final MediaPlayerFactory mediaPlayerFactory;
@@ -25,20 +28,17 @@ public class DMediaPlayer implements MediaPlayerInterface {
     private EmbeddedMediaPlayer embeddedMediaPlayer;
     private MediaPlayCompleted onComplete;
 
-    private Dimension fitScreen;
-    private int volume = 0;
+    private List<OnPlaybackStart> onStartEvents;
 
 
     public DMediaPlayer() {
+        onStartEvents = new ArrayList<>();
         this.mediaPlayerFactory = new MediaPlayerFactory();
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
         this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
             @Override
             public void playing(MediaPlayer mediaPlayer) {
-                if(fitScreen != null)
-                    scaleToScreen(fitScreen);
-                if(volume > 0)
-                    setVolume(volume);
+                CompletableFuture.runAsync(() -> onStart());
             }
 
             @Override
@@ -93,11 +93,6 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public void setFitToScreen(Dimension dimension){
-        fitScreen = dimension;
-    }
-
-    @Override
     public void play(){
         embeddedMediaPlayer.controls().play();
     }
@@ -135,39 +130,38 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public int getCurrentTime() {
-        return 0;
+    public long getCurrentTime() {
+        return embeddedMediaPlayer.status().time();
     }
 
     @Override
     public void seekForward(int seconds) {
-        embeddedMediaPlayer.controls().skipTime(seconds);
+        embeddedMediaPlayer.controls().skipTime(seconds * 1000L);
     }
 
     @Override
     public void seekBackward(int second) {
-        embeddedMediaPlayer.controls().skipTime(-second);
+        embeddedMediaPlayer.controls().skipTime(-(second * 1000L));
     }
 
     @Override
     public void setTime(long seconds){
-        embeddedMediaPlayer.controls().setTime(seconds);
+        embeddedMediaPlayer.controls().setTime(seconds * 1000);
     }
 
     @Override
     public void setVolume(int volume) {
-        this.volume = volume;
         embeddedMediaPlayer.audio().setVolume(volume);
     }
 
     @Override
     public int getVolume(){
-        return volume;
+        return embeddedMediaPlayer.audio().volume();
     }
 
     @Override
-    public boolean isPaused(){
-        return !embeddedMediaPlayer.status().isPlaying();
+    public boolean isPlaying(){
+        return embeddedMediaPlayer.status().isPlaying();
     }
     @Override
     public void setOnComplete(MediaPlayCompleted function) {
@@ -175,32 +169,17 @@ public class DMediaPlayer implements MediaPlayerInterface {
     }
 
     @Override
-    public List<Object> getSubtitles() {
-        return null;
+    public List<TrackDescription> getSubtitles() {
+        return embeddedMediaPlayer.subpictures().trackDescriptions();
     }
 
     @Override
-    public List<Object> getAudioTracks() {
-        return null;
-    }
-
-    @Override
-    public void setMediaType(String media) {
-
-    }
-
-    @Override
-    public boolean isVideo() {
-        return false;
+    public List<TrackDescription> getAudioTracks() {
+        return embeddedMediaPlayer.audio().trackDescriptions();
     }
 
     @Override
     public void setSubtitle() {
-
-    }
-
-    @Override
-    public void loadSubtitleFile() {
 
     }
 
@@ -212,5 +191,30 @@ public class DMediaPlayer implements MediaPlayerInterface {
     @Override
     public ImageView getMediaView(){
         return mediaView;
+    }
+
+    @Override
+    public void nextFrame() {
+
+    }
+
+    @Override
+    public void previousFrame() {
+
+    }
+
+    @Override
+    public void playAudioOnly() {
+
+    }
+
+    @Override
+    public void addOnStartEvents(OnPlaybackStart event) {
+        onStartEvents.add(event);
+    }
+
+    private void onStart(){
+        onStartEvents.forEach(event -> CompletableFuture.runAsync(event::onStart));
+        onStartEvents.clear();
     }
 }

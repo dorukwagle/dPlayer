@@ -4,4 +4,6 @@ public interface ExtendedMediaPlayerInterface extends MediaPlayerInterface{
     void nextFrame(); // forward the video by one frame
     void previousFrame(); // back seek the video by one frame
     void playAudioOnly(); // only play the audio from the file
+
+    void addOnStartEvents(OnPlaybackStart event); // fire the events when the playback is started
 }
