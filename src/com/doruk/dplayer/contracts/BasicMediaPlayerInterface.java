@@ -24,4 +24,6 @@ public interface BasicMediaPlayerInterface {
 
     ImageView getMediaView();
 
+    long getDuration(); // returns the total playback duration of the media
+
 }

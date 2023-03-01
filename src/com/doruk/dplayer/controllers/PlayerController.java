@@ -12,10 +12,12 @@ import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.EventType;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
@@ -218,12 +220,18 @@ public class PlayerController implements Controllers {
 
         var mediaSlider = controlPanel.getSeekBar();
 
-        mediaSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+        mediaSlider.setOnMouseClicked(mouseEvent -> {
             var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
             var ratio = totalTime / mediaSlider.getMax();
             var curTime = (long) (mediaSlider.getValue() * ratio);
 
             mediaPlayer.setTime(curTime / 1000);
+        });
+
+        mediaSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
+            var ratio = totalTime / mediaSlider.getMax();
+            var curTime = (long) (mediaSlider.getValue() * ratio);
 
             currentPosition.setText(millisToDuration(curTime));
             var remainingText = (remainingPosition.getText().charAt(0) == '-' ?
@@ -240,23 +248,25 @@ public class PlayerController implements Controllers {
             var totalTime = durationToMillis(remainingPosition.getText());
             remainingPosition.setText("-" + millisToDuration(totalTime - curTime));
         });
-
-        // set the slider to 0 position when the video starts
-//        mediaSlider.setValue(0);
     }
 
-    // update the progress bar and timer labels
-    private void trackPlaybackProgress(){
+
+    public void trackPlaybackProgress(){
+        var slider = controlPanel.getSeekBar();
 
         while(mediaPlayer.isPlaying()){
             try {
-                Thread.sleep(1000);
+                var curTime = mediaPlayer.getCurrentTime();
+                var ratio = mediaPlayer.getDuration() / slider.getMax();
+                var sliderPos = curTime / ratio;
+                Platform.runLater(()->slider.setValue(sliderPos));
+
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
         }
-
-        // if the player is paused, or new media started,  restart the progress tracker
+        // continue tracking after pause or next media
         mediaPlayer.addOnStartEvents(this::trackPlaybackProgress);
     }
 
@@ -363,4 +373,5 @@ public class PlayerController implements Controllers {
     public Button getStopButton(){
         return controlPanel.getStopBtn();
     }
+    
 }

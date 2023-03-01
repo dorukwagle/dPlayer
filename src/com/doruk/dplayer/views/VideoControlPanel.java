@@ -21,13 +21,13 @@ public class VideoControlPanel extends VBox {
 
         currentPosition = new Label("00:00:00");
         seekBar = new Slider();
-        seekBar.setCursor(Cursor.CLOSED_HAND);
+        seekBar.setCursor(Cursor.OPEN_HAND);
         seekBar.setMax(1000);
         seekBar.setMin(0);
         customizeFill(seekBar);
 
         totalRemainingPosition = new Label("00:00:00");
-        totalRemainingPosition.setCursor(Cursor.CLOSED_HAND);
+        totalRemainingPosition.setCursor(Cursor.OPEN_HAND);
         sliderBox.setLeft(currentPosition);
         sliderBox.setCenter(seekBar);
         sliderBox.setRight(totalRemainingPosition);

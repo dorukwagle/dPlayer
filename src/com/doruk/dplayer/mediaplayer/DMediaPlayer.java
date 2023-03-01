@@ -4,6 +4,7 @@ import com.doruk.dplayer.contracts.ExtendedMediaPlayerInterface;
 import com.doruk.dplayer.contracts.MediaPlayCompleted;
 import com.doruk.dplayer.contracts.OnPlaybackStart;
 import javafx.application.Platform;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -29,7 +30,6 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     private MediaPlayCompleted onComplete;
 
     private List<OnPlaybackStart> onStartEvents;
-
 
     public DMediaPlayer() {
         onStartEvents = new ArrayList<>();
@@ -58,8 +58,9 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
 
             @Override
             public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-            }
 
+
+                }
         });
         this.mediaView = new ImageView();
         this.mediaView.setPreserveRatio(true);
@@ -132,6 +133,11 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     @Override
     public long getCurrentTime() {
         return embeddedMediaPlayer.status().time();
+    }
+
+    @Override
+    public long getDuration(){
+        return embeddedMediaPlayer.media().info().duration();
     }
 
     @Override
