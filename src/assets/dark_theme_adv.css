@@ -122,18 +122,6 @@
     -fx-cursor: hand;
 }
 
-.slider {
-    -fx-cursor: hand;
-    -default-track-color: -fx-control-inner-background;
-    -track-color: -default-track-color ;
-}
-
-.slider .track {
-    -fx-background-color: -fx-shadow-highlight-color,
-          linear-gradient(to bottom, derive(-fx-text-box-border, -10%), -fx-text-box-border),
-          -track-color;
-}
-
 .list-cell:selected:filled:hover {
   -fx-view-order: -1;
   -fx-effect: dropshadow(gaussian, #67676D, 12, 0.05, 0.0, 2);
@@ -142,4 +130,48 @@
 .total_duration{
     -fx-font-weight: bold;
     -fx-font-size: 20px;
+}
+
+
+
+
+
+
+.slider {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-border-insets: 0;
+}
+
+.slider .thumb {
+    -fx-background-color: red;
+
+}
+
+.slider .track {
+    -fx-background-color: null;
+    -fx-pref-height: 20px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-border-insets: 0;
+}
+
+.progress-bar {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .track{
+    -fx-background-color: #2d333a;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #00b4d8;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
 }

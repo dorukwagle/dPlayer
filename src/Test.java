@@ -1,28 +1,42 @@
-public class Test {
-    private String millisToDuration(long dur){
-        long millis = dur;
-        long hours = millis / (60 * 60 * 1000);  // convert to hours
-        millis %= (60 * 60 * 1000);
-        long minutes = millis / (60 * 1000); // convert to minutes
-        millis %= (60 * 1000);
-        long seconds = millis / 1000; // convert to seconds
-        return (hours/10 > 1? hours: "0"+hours) + ":" +
-                (minutes/10 > 0? minutes: "0"+minutes) + ":" +
-                (seconds/10 > 0? seconds: "0"+seconds);
-    }
+import com.doruk.dplayer.seekbar.SeekBar;
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-    private long durationToMillis(String dur){
-        String[] durs = dur.split(":");
-        var hrs = Long.parseLong(durs[0]) * 60 * 60;
-        var min = Long.parseLong(durs[1]) * 60;
-        var sec = Long.parseLong(durs[2]);
-        return (hrs + min + sec) * 1000;
+
+public class Test extends Application  {
+
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("ComboBox Experiment 1");
+
+        ComboBox comboBox = new ComboBox();
+
+        comboBox.getItems().add("Choice 1");
+        comboBox.getItems().add("Choice 2");
+        comboBox.getItems().add("Choice 3");
+
+
+        HBox hbox = new HBox(comboBox);
+
+        HBox hhbox = new HBox(new SeekBar());
+
+        VBox vbox = new VBox(hbox, hhbox);
+        vbox.setFillWidth(true);
+
+
+        Scene scene = new Scene(vbox);
+        scene.getStylesheets().add(this.getClass().getResource("/assets/seek_bar.css").toString());
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
     }
 
     public static void main(String[] args) {
-        var a = new Test().durationToMillis("00:05:07");
-        var b = new Test().millisToDuration(307000);
-        System.out.println(a);
-        System.out.println(b);
+        Application.launch(args);
     }
 }

@@ -192,11 +192,11 @@ public class PlayerController implements Controllers {
         // update slider position
         volumeSlider.setValue(preference.getVolume());
         volumeLabel.setText(preference.getVolume()+"%");
-        volumeSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            volumeLabel.setText(newValue.intValue() + "%");
-            mediaPlayer.setVolume(newValue.intValue());
-            preference.setVolume(newValue.intValue());
-        });
+//        volumeSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+//            volumeLabel.setText(newValue.intValue() + "%");
+//            mediaPlayer.setVolume(newValue.intValue());
+//            preference.setVolume(newValue.intValue());
+//        });
 
         var volumeBtn = controlPanel.getAudioBtn();
         volumeBtn.setOnAction(event -> {
@@ -220,24 +220,24 @@ public class PlayerController implements Controllers {
 
         var mediaSlider = controlPanel.getSeekBar();
 
-        mediaSlider.setOnMouseClicked(mouseEvent -> {
-            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
-            var ratio = totalTime / mediaSlider.getMax();
-            var curTime = (long) (mediaSlider.getValue() * ratio);
+//        mediaSlider.setOnMouseClicked(mouseEvent -> {
+//            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
+//            var ratio = totalTime / mediaSlider.getMax();
+//            var curTime = (long) (mediaSlider.getValue() * ratio);
+//
+//            mediaPlayer.setTime(curTime / 1000);
+//        });
 
-            mediaPlayer.setTime(curTime / 1000);
-        });
-
-        mediaSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
-            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
-            var ratio = totalTime / mediaSlider.getMax();
-            var curTime = (long) (mediaSlider.getValue() * ratio);
-
-            currentPosition.setText(millisToDuration(curTime));
-            var remainingText = (remainingPosition.getText().charAt(0) == '-' ?
-                    "-" + millisToDuration(totalTime - curTime): drawer.getSelectedItem()[2]);
-            remainingPosition.setText(remainingText);
-        });
+//        mediaSlider.valueProperty().addListener((observableValue, oldValue, newValue) -> {
+//            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
+//            var ratio = totalTime / mediaSlider.getMax();
+//            var curTime = (long) (mediaSlider.getValue() * ratio);
+//
+//            currentPosition.setText(millisToDuration(curTime));
+//            var remainingText = (remainingPosition.getText().charAt(0) == '-' ?
+//                    "-" + millisToDuration(totalTime - curTime): drawer.getSelectedItem()[2]);
+//            remainingPosition.setText(remainingText);
+//        });
 
         remainingPosition.setOnMouseClicked(mouseEvent -> {
             if(remainingPosition.getText().charAt(0) == '-') {

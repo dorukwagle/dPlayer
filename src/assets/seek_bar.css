@@ -1,0 +1,37 @@
+.slider {
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-border-insets: 0;
+}
+
+.slider .thumb {
+    -fx-background-color: null;
+}
+
+.slider .track {
+    -fx-background-color: null;
+    -fx-pref-height: 20px;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+    -fx-border-insets: 0;
+}
+
+.progress-bar {
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .track{
+    -fx-background-color: #1e2945;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}
+
+.progress-bar .bar {
+    -fx-background-color: #002366;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+}

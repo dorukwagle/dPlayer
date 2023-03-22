@@ -1,5 +1,6 @@
 package com.doruk.dplayer.views;
 
+import com.doruk.dplayer.seekbar.SeekBar;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -10,7 +11,7 @@ public class VideoControlPanel extends VBox {
 
     private Button drawerBtn, playPause, previousBtn, stopBtn, nextBtn, audioBtn;
     private Label currentPosition, totalRemainingPosition, volumeLabel;
-    private Slider seekBar, volumeSlider;
+    private SeekBar seekBar, volumeSlider;
 
     public VideoControlPanel(ResourceProvider icons){
         ToolBar panel = new ToolBar();
@@ -20,14 +21,14 @@ public class VideoControlPanel extends VBox {
         BorderPane sliderBox = new BorderPane();
 
         currentPosition = new Label("00:00:00");
-        seekBar = new Slider();
-        seekBar.setCursor(Cursor.OPEN_HAND);
+        seekBar = new SeekBar();
+        seekBar.setCursor(Cursor.HAND);
         seekBar.setMax(1000);
-        seekBar.setMin(0);
-        customizeFill(seekBar);
+//        seekBar.setMin(0);
+//        customizeFill(seekBar);
 
         totalRemainingPosition = new Label("00:00:00");
-        totalRemainingPosition.setCursor(Cursor.OPEN_HAND);
+        totalRemainingPosition.setCursor(Cursor.HAND);
         sliderBox.setLeft(currentPosition);
         sliderBox.setCenter(seekBar);
         sliderBox.setRight(totalRemainingPosition);
@@ -56,10 +57,10 @@ public class VideoControlPanel extends VBox {
         audioBtn = new Button();
         audioBtn.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
 
-        volumeSlider = new Slider();
+        volumeSlider = new SeekBar();
         volumeSlider.setMax(100);
-        volumeSlider.setMin(0);
-        customizeFill(volumeSlider);
+//        volumeSlider.setMin(0);
+//        customizeFill(volumeSlider);
         volumeSlider.setValue(25);
         HBox.setMargin(volumeSlider, new Insets(5, 0, 0, 0));
 
@@ -88,6 +89,7 @@ public class VideoControlPanel extends VBox {
                             "-default-track-color %1$.1f%%, " +
                             "-default-track-color 100%%);",
                     percentage);
+//            slider.setOpacity(0.01);
             slider.setStyle(style);
         });
     }
@@ -128,11 +130,11 @@ public class VideoControlPanel extends VBox {
         return volumeLabel;
     }
 
-    public Slider getSeekBar() {
+    public SeekBar getSeekBar() {
         return seekBar;
     }
 
-    public Slider getVolumeSlider() {
+    public SeekBar getVolumeSlider() {
         return volumeSlider;
     }
 }
