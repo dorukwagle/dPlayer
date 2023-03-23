@@ -4,6 +4,7 @@ import com.doruk.dplayer.contracts.Controllers;
 import com.doruk.dplayer.contracts.ExtendedMediaPlayerInterface;
 import com.doruk.dplayer.mediaplayer.DMediaPlayer;
 import com.doruk.dplayer.models.HomeModel;
+import com.doruk.dplayer.seekbar.SeekBar;
 import com.doruk.dplayer.utilities.PreferencesManager;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import com.doruk.dplayer.views.Drawer;
@@ -16,12 +17,15 @@ import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +46,9 @@ public class PlayerController implements Controllers {
     private Dimension playerViewDimensions;
     private PreferencesManager preference;
     private ResourceProvider icons;
+
+    private Label currentPosition, remainingPosition;
+    private SeekBar mediaSlider, volumeSlider;
 
     public PlayerController(){
         icons = new ResourceProvider();
@@ -186,7 +193,7 @@ public class PlayerController implements Controllers {
         var next = controlPanel.getNextBtn();
         next.setOnAction(event -> playMedia(getNextMedia()));
 
-        var volumeSlider = controlPanel.getVolumeSlider();
+        volumeSlider = controlPanel.getVolumeSlider();
         var volumeLabel = controlPanel.getVolumeLabel();
         // update slider position
         volumeSlider.setValue(preference.getVolume());
@@ -208,6 +215,8 @@ public class PlayerController implements Controllers {
             mediaPlayer.setVolume((int)volumeSlider.getProgressValue());
             volumeBtn.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
         });
+        //show popup volume label while hovering
+        volumeSlider.setShowPopup(this::showVolumePopup);
     }
 
     private void addMenuBarEventListeners(){
@@ -215,10 +224,10 @@ public class PlayerController implements Controllers {
     }
 
     private void monitorPlaybackAndSeekBar(){
-        var currentPosition = controlPanel.getCurrentPosition();
-        var remainingPosition = controlPanel.getTotalRemainingPosition();
+        currentPosition = controlPanel.getCurrentPosition();
+        remainingPosition = controlPanel.getTotalRemainingPosition();
 
-        var mediaSlider = controlPanel.getSeekBar();
+        mediaSlider = controlPanel.getSeekBar();
 
         mediaSlider.setOnClick(mouseEvent -> {
             var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
@@ -250,19 +259,38 @@ public class PlayerController implements Controllers {
         });
 
         // show time popups while playing hovering on the slider
-        mediaSlider.setShowPopup((e, slider) -> {
-            NumberAxis axis = (NumberAxis) slider.lookup(".axis");
-            Point2D locationInAxis = axis.sceneToLocal(e.getSceneX(), e.getSceneY());
-            double mouseX = locationInAxis.getX() ;
-            double value = axis.getValueForDisplay(mouseX).doubleValue() ;
-            if (value >= slider.getMin() && value <= slider.getMax()) {
-                mediaSlider.setPopupText(String.format("Value: %.1f", value));
-            } else {
-                mediaSlider.setPopupText("Value: ---");
-            }
-            mediaSlider.setPopupAnchorX(e.getScreenX());
-            mediaSlider.setPopupAnchorY(e.getScreenY());
-        });
+        mediaSlider.setShowPopup(this::showPlayerPopup);
+    }
+
+    public void showPlayerPopup(MouseEvent e, Slider slider){
+        NumberAxis axis = (NumberAxis) slider.lookup(".axis");
+        Point2D locationInAxis = axis.sceneToLocal(e.getSceneX(), e.getSceneY());
+        double mouseX = locationInAxis.getX() ;
+        double value = axis.getValueForDisplay(mouseX).doubleValue() ;
+        if (value >= slider.getMin() && value <= slider.getMax()) {
+            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
+            var ratio = totalTime / slider.getMax();
+            var curTime = (long) (value * ratio);
+            mediaSlider.setPopupText(millisToDuration(curTime));
+        } else {
+            mediaSlider.setPopupText("__:__:__");
+        }
+        mediaSlider.setPopupAnchorX(e.getScreenX());
+        mediaSlider.setPopupAnchorY(e.getScreenY());
+    }
+
+    public void showVolumePopup(MouseEvent e, Slider slider){
+        NumberAxis axis = (NumberAxis) slider.lookup(".axis");
+        Point2D locationInAxis = axis.sceneToLocal(e.getSceneX(), e.getSceneY());
+        double mouseX = locationInAxis.getX() ;
+        double value = axis.getValueForDisplay(mouseX).doubleValue();
+        if (value >= slider.getMin() && value <= slider.getMax()) {
+            volumeSlider.setPopupText("Vol: " + (int)value + "%");
+        } else {
+            volumeSlider.setPopupText("Volume: __");
+        }
+        volumeSlider.setPopupAnchorX(e.getScreenX());
+        volumeSlider.setPopupAnchorY(e.getScreenY());
     }
 
     public void trackPlaybackProgress(){
