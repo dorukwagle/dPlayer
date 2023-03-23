@@ -36,7 +36,7 @@ public class VideoControlPanel extends VBox {
         BorderPane btnBoxBase = new BorderPane();
         HBox btnBox = new HBox();
         btnBoxBase.setLeft(btnBox);
-        HBox volControl = new HBox();
+        BorderPane volControl = new BorderPane();
         btnBoxBase.setRight(volControl);
 
         playPause = new Button();
@@ -65,7 +65,10 @@ public class VideoControlPanel extends VBox {
         volumeLabel = new Label("25%");
 
         btnBox.getChildren().addAll(playPause, previousBtn, stopBtn, nextBtn);
-        volControl.getChildren().addAll(audioBtn, volumeSlider, volumeLabel);
+//        volControl.getChildren().addAll(audioBtn, volumeSlider, volumeLabel);
+        volControl.setLeft(audioBtn);
+        volControl.setCenter(volumeSlider);
+        volControl.setRight(volumeLabel);
 
         drawerBtn = new Button();
         drawerBtn.setGraphic(icons.getIcon("navigation_drawer_icon", 30, 30));

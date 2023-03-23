@@ -1,18 +1,21 @@
 package com.doruk.dplayer.seekbar;
 
-import javafx.beans.property.DoubleProperty;
+import com.doruk.dplayer.contracts.SeekBarPopup;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-
-import java.sql.Time;
-import java.util.concurrent.CompletableFuture;
+import javafx.stage.Popup;
 
 public class SeekBar extends HBox {
 
@@ -22,8 +25,17 @@ public class SeekBar extends HBox {
     private long max = 1;
     private EventHandler<MouseEvent> onClicked;
     private ChangeListener<Number> valueChanged;
+    double popupOffset = 30;
+
+    private Popup popup;
+    private Label popupLabel;
+    private SeekBarPopup showPopup;
 
     public SeekBar(){
+        popup = new Popup();
+        popupLabel = new Label();
+        popupLabel.setBackground(Background.fill(Paint.valueOf("#2d333a")));
+        popup.getContent().add(popupLabel);
 
         setFillHeight(false);
 
@@ -38,6 +50,9 @@ public class SeekBar extends HBox {
         control = new Slider();
         control.setMax(max);
         control.setMin(min);
+        control.setShowTickMarks(true);
+        control.setMajorTickUnit(5);
+        control.setOpacity(0.01);
         HBox.setHgrow(control, Priority.ALWAYS);
         control.setCursor(Cursor.HAND);
 
@@ -45,6 +60,15 @@ public class SeekBar extends HBox {
         getChildren().add(barHolder);
 
         addListeners();
+    }
+
+    private void displayPopup(MouseEvent event){
+        if(showPopup == null) return;;
+
+        showPopup.show(event, control);
+
+        control.setOnMouseEntered(e -> popup.show(control, e.getScreenX(), e.getScreenY() + popupOffset));
+        control.setOnMouseExited(e -> popup.hide());
     }
 
     private void addListeners(){
@@ -58,6 +82,11 @@ public class SeekBar extends HBox {
         progressBar.progressProperty().addListener((observableValue, oldValue, newValue) -> {
             if(valueChanged != null) valueChanged.changed(observableValue, oldValue.doubleValue() * max,
                     newValue.doubleValue() * max);
+        });
+
+        control.setOnMouseMoved(e -> {
+            if(showPopup == null) return;
+            displayPopup(e);
         });
     }
 
@@ -97,5 +126,21 @@ public class SeekBar extends HBox {
 
     public void setOnValueChange(ChangeListener<Number> listener){
         valueChanged = listener;
+    }
+
+    public void setShowPopup(SeekBarPopup popup){
+        showPopup = popup;
+    }
+
+    public void setPopupText(String text){
+        popupLabel.setText(text);
+    }
+
+    public void setPopupAnchorX(double screenX){
+        popup.setAnchorX(screenX);
+    }
+
+    public void setPopupAnchorY(double screenY){
+        popup.setAnchorY(screenY - popupOffset);
     }
 }

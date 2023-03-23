@@ -12,22 +12,22 @@ import com.doruk.dplayer.views.PlayerView;
 import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.event.EventType;
+import javafx.geometry.Point2D;
 import javafx.scene.Scene;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import static com.doruk.dplayer.utilities.DurUtils.*;
 
 public class PlayerController implements Controllers {
     private ExtendedMediaPlayerInterface mediaPlayer;
@@ -92,7 +92,6 @@ public class PlayerController implements Controllers {
     public PlayerController(File[] params){
         this();
         this.mediaList = params;
-
         updatePlayList();
         startPlaying();
     }
@@ -249,8 +248,22 @@ public class PlayerController implements Controllers {
             var totalTime = durationToMillis(remainingPosition.getText());
             remainingPosition.setText("-" + millisToDuration(totalTime - curTime));
         });
-    }
 
+        // show time popups while playing hovering on the slider
+        mediaSlider.setShowPopup((e, slider) -> {
+            NumberAxis axis = (NumberAxis) slider.lookup(".axis");
+            Point2D locationInAxis = axis.sceneToLocal(e.getSceneX(), e.getSceneY());
+            double mouseX = locationInAxis.getX() ;
+            double value = axis.getValueForDisplay(mouseX).doubleValue() ;
+            if (value >= slider.getMin() && value <= slider.getMax()) {
+                mediaSlider.setPopupText(String.format("Value: %.1f", value));
+            } else {
+                mediaSlider.setPopupText("Value: ---");
+            }
+            mediaSlider.setPopupAnchorX(e.getScreenX());
+            mediaSlider.setPopupAnchorY(e.getScreenY());
+        });
+    }
 
     public void trackPlaybackProgress(){
         var slider = controlPanel.getSeekBar();
@@ -280,6 +293,7 @@ public class PlayerController implements Controllers {
         var a = mediaPlayer.getAudioTracks();
         System.out.println(a.toString());
     }
+
 
     private void updatePlayList(){
         CompletableFuture.runAsync(() -> {
@@ -323,26 +337,6 @@ public class PlayerController implements Controllers {
             String totalDuration = millisToDuration(totalDur[0]);
             Platform.runLater(() -> drawer.getTotalDuration().setText("Total Duration: " + totalDuration));
         });
-    }
-
-    private String millisToDuration(long dur){
-        long millis = dur;
-        long hours = millis / (60 * 60 * 1000);  // convert to hours
-        millis %= (60 * 60 * 1000);
-        long minutes = millis / (60 * 1000); // convert to minutes
-        millis %= (60 * 1000);
-        long seconds = millis / 1000; // convert to seconds
-        return (hours/10 > 1? hours: "0"+hours) + ":" +
-                (minutes/10 > 0? minutes: "0"+minutes) + ":" +
-                (seconds/10 > 0? seconds: "0"+seconds);
-    }
-
-    private long durationToMillis(String dur){
-        String[] durs = dur.split(":");
-        var hrs = Long.parseLong(durs[0]) * 60 * 60;
-        var min = Long.parseLong(durs[1]) * 60;
-        var sec = Long.parseLong(durs[2]);
-        return (hrs + min + sec) * 1000;
     }
 
     private long getResumeDuration(String filename){

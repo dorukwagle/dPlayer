@@ -158,6 +158,11 @@
     -fx-border-insets: 0;
 }
 
+.slider .axis {
+    -fx-pref-height:0;
+}
+
+
 .progress-bar {
     -fx-background-color: null;
     -fx-background-insets: 0;
