@@ -24,8 +24,7 @@ public class VideoControlPanel extends VBox {
         seekBar = new SeekBar();
         seekBar.setCursor(Cursor.HAND);
         seekBar.setMax(1000);
-//        seekBar.setMin(0);
-//        customizeFill(seekBar);
+        seekBar.setMin(0);
 
         totalRemainingPosition = new Label("00:00:00");
         totalRemainingPosition.setCursor(Cursor.HAND);
@@ -58,9 +57,8 @@ public class VideoControlPanel extends VBox {
         audioBtn.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
 
         volumeSlider = new SeekBar();
-        volumeSlider.setMax(100);
-//        volumeSlider.setMin(0);
-//        customizeFill(volumeSlider);
+        volumeSlider.setMax(150);
+        volumeSlider.setMin(0);
         volumeSlider.setValue(25);
         HBox.setMargin(volumeSlider, new Insets(5, 0, 0, 0));
 
@@ -78,6 +76,7 @@ public class VideoControlPanel extends VBox {
         controlBase.setBottom(btnBoxBase);
         getChildren().add(panel);
     }
+
 
     private void customizeFill(Slider slider){
         slider.valueProperty().addListener((obs, oldValue, newValue) -> {

@@ -146,7 +146,7 @@
 
 .slider .thumb {
     -fx-background-color: red;
-
+    -fx-pref-width: 0;
 }
 
 .slider .track {

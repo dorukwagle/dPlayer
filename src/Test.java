@@ -23,17 +23,20 @@ public class Test extends Application  {
 
         HBox hbox = new HBox(comboBox);
 
-        HBox hhbox = new HBox(new SeekBar());
+        SeekBar seekBar = new SeekBar();
+        seekBar.setMax(100);
+        seekBar.setMin(0);
+        seekBar.setValue(20);
+        HBox hhbox = new HBox(seekBar);
 
         VBox vbox = new VBox(hbox, hhbox);
         vbox.setFillWidth(true);
 
 
         Scene scene = new Scene(vbox);
-        scene.getStylesheets().add(this.getClass().getResource("/assets/seek_bar.css").toString());
+        scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
         primaryStage.setScene(scene);
         primaryStage.show();
-
     }
 
     public static void main(String[] args) {
