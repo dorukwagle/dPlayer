@@ -9,7 +9,8 @@ import java.util.List;
 public interface MediaPlayerInterface extends BasicMediaPlayerInterface{
     List<TrackDescription> getSubtitles();
     List<TrackDescription> getAudioTracks();
-    void setSubtitle(); // set one of the loaded subtitle either from the video or file
-    void setAudioTrack(); // set one of the available audio track
+    void setSubtitle(int id); // set one of the loaded subtitle either from the video or file
+    void setAudioTrack(int id); // set one of the available audio track
+    void setSubtitleFile(String filename);
     void scaleToScreen(Dimension dimension); //
 }

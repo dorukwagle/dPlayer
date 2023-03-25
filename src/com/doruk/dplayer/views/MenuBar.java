@@ -10,6 +10,7 @@ public class MenuBar extends VBox {
     private MenuItem preference, exit;
     private CheckMenuItem soundOnly;
     private ToggleGroup subtitleToggle, audioTracksToggle, playBackSpeedGroup;
+    private RadioMenuItem addSubtitleMenu;
 
     public MenuBar(ResourceProvider icons){
         javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
@@ -40,8 +41,8 @@ public class MenuBar extends VBox {
 
         subtitle = new Menu("Subtitles");
         subtitle.setGraphic(icons.getIcon("subtitles_icon", 20, 20));
-        RadioMenuItem disableSubtitle = new RadioMenuItem("Disable");
-        subtitle.getItems().add(disableSubtitle);
+        addSubtitleMenu = new RadioMenuItem("Add File");
+        subtitle.getItems().add(addSubtitleMenu);
 
         audioTracks = new Menu("Audio Tracks");
         audioTracks.setGraphic(icons.getIcon("volume_max_icon", 20, 20));
@@ -55,23 +56,24 @@ public class MenuBar extends VBox {
 
 
         subtitleToggle = new ToggleGroup();
-        subtitleToggle.getToggles().add(disableSubtitle);
         audioTracksToggle = new ToggleGroup();
 
         menuBar.getMenus().addAll(playback, subtitle, audioTracks, controls);
         getChildren().add(menuBar);
     }
 
-    public void addSubtitleItem(String text){
+    public RadioMenuItem addSubtitleItem(String text){
         RadioMenuItem item = new RadioMenuItem(text);
         subtitle.getItems().add(item);
         subtitleToggle.getToggles().add(item);
+        return item;
     }
 
-    public void addAudioTrackItem(String text){
+    public RadioMenuItem addAudioTrackItem(String text){
         RadioMenuItem item = new RadioMenuItem(text);
         audioTracks.getItems().add(item);
         audioTracksToggle.getToggles().add(item);
+        return item;
     }
 
     public MenuItem getPreference() {
@@ -96,5 +98,9 @@ public class MenuBar extends VBox {
 
     public ToggleGroup getPlayBackSpeedGroup() {
         return playBackSpeedGroup;
+    }
+
+    public RadioMenuItem getAddSubtitleMenu() {
+        return addSubtitleMenu;
     }
 }

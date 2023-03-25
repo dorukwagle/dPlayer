@@ -4,7 +4,6 @@ import com.doruk.dplayer.contracts.ExtendedMediaPlayerInterface;
 import com.doruk.dplayer.contracts.MediaPlayCompleted;
 import com.doruk.dplayer.contracts.OnPlaybackStart;
 import javafx.application.Platform;
-import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import uk.co.caprica.vlcj.factory.MediaPlayerFactory;
@@ -15,7 +14,7 @@ import uk.co.caprica.vlcj.player.base.MediaPlayerEventAdapter;
 import uk.co.caprica.vlcj.player.base.TrackDescription;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -33,7 +32,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
 
     public DMediaPlayer() {
         onStartEvents = new ArrayList<>();
-        this.mediaPlayerFactory = new MediaPlayerFactory();
+        this.mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
         this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
             @Override
@@ -185,13 +184,18 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     }
 
     @Override
-    public void setSubtitle() {
-
+    public void setSubtitle(int id) {
+        embeddedMediaPlayer.subpictures().setTrack(id);
     }
 
     @Override
-    public void setAudioTrack() {
+    public void setAudioTrack(int id) {
+        embeddedMediaPlayer.audio().setTrack(id);
+    }
 
+    @Override
+    public void setSubtitleFile(String filename){
+        embeddedMediaPlayer.subpictures().setSubTitleFile(filename);
     }
 
     @Override

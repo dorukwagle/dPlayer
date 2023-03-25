@@ -314,12 +314,18 @@ public class PlayerController implements Controllers {
 
     private void fetchVideoSubtitles(){
         var a = mediaPlayer.getSubtitles();
-        System.out.println(a.toString());
+        for (var track: a){
+            var item = menuBar.addSubtitleItem(track.description());
+            item.setOnAction(event -> mediaPlayer.setSubtitle(track.id()));
+        }
     }
 
     private void fetchAudioTracks(){
         var a = mediaPlayer.getAudioTracks();
-        System.out.println(a.toString());
+        for (var track: a) {
+            var item = menuBar.addAudioTrackItem(track.description());
+            item.setOnAction(event -> mediaPlayer.setAudioTrack(track.id()));
+        }
     }
 
 
@@ -375,6 +381,10 @@ public class PlayerController implements Controllers {
                 return preference.getResumePosition(filename);
         }
         return 0;
+    }
+
+    private void setSubtitleFromFile(String path, String filename){
+
     }
 
     @Override
