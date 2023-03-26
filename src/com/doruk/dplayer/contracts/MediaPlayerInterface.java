@@ -5,6 +5,7 @@ import uk.co.caprica.vlcj.player.base.TrackDescription;
 
 import java.awt.Dimension;
 import java.util.List;
+import java.util.function.Consumer;
 
 public interface MediaPlayerInterface extends BasicMediaPlayerInterface{
     List<TrackDescription> getSubtitles();
@@ -14,4 +15,6 @@ public interface MediaPlayerInterface extends BasicMediaPlayerInterface{
     void setSubtitleFile(String filename);
     void setPlayBackSpeed(float speed);
     void scaleToScreen(Dimension dimension); //
+
+    void setOnTimeChanged(Consumer<Long> con);
 }

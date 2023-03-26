@@ -18,6 +18,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 
 public class DMediaPlayer implements ExtendedMediaPlayerInterface {
@@ -29,6 +30,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     private MediaPlayCompleted onComplete;
 
     private List<OnPlaybackStart> onStartEvents;
+    private Consumer<Long> timeChanged;
 
     public DMediaPlayer() {
         onStartEvents = new ArrayList<>();
@@ -57,9 +59,9 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
 
             @Override
             public void timeChanged(MediaPlayer mediaPlayer, long newTime) {
-
-
-                }
+                if (timeChanged == null) return;
+                CompletableFuture.runAsync(() -> timeChanged.accept(newTime));
+            }
         });
         this.mediaView = new ImageView();
         this.mediaView.setPreserveRatio(true);
@@ -226,6 +228,11 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     @Override
     public void addOnStartEvents(OnPlaybackStart event) {
         onStartEvents.add(event);
+    }
+
+    @Override
+    public void setOnTimeChanged(Consumer<Long> consumer){
+        timeChanged = consumer;
     }
 
     private void onStart(){

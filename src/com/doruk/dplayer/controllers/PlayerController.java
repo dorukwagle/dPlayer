@@ -151,7 +151,7 @@ public class PlayerController implements Controllers {
             if(resume > 0)
                 mediaPlayer.addOnStartEvents(() -> mediaPlayer.setTime(resume));
         });
-        mediaPlayer.addOnStartEvents(this::trackPlaybackProgress);
+        mediaPlayer.setOnTimeChanged(this::trackPlaybackProgress);
     }
 
     private void playMedia(){
@@ -308,23 +308,12 @@ public class PlayerController implements Controllers {
         volumeSlider.setPopupAnchorY(e.getScreenY());
     }
 
-    public void trackPlaybackProgress(){
+    public void trackPlaybackProgress(long newTime){
         var slider = controlPanel.getSeekBar();
 
-        while(mediaPlayer.isPlaying()){
-            try {
-                var curTime = mediaPlayer.getCurrentTime();
-                var ratio = mediaPlayer.getDuration() / slider.getMax();
-                var sliderPos = curTime / ratio;
-                Platform.runLater(()->slider.setValue(sliderPos));
-
-                Thread.sleep(700);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        // continue tracking after pause or next media
-        mediaPlayer.addOnStartEvents(this::trackPlaybackProgress);
+        var ratio = mediaPlayer.getDuration() / slider.getMax();
+        var sliderPos = newTime / ratio;
+        Platform.runLater(()->slider.setValue(sliderPos));
     }
 
     private void fetchVideoSubtitles(){
@@ -396,10 +385,6 @@ public class PlayerController implements Controllers {
                 return preference.getResumePosition(filename);
         }
         return 0;
-    }
-
-    private void setSubtitleFromFile(String path, String filename){
-
     }
 
     @Override
