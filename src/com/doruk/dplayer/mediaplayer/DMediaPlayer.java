@@ -34,7 +34,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
 
     public DMediaPlayer() {
         onStartEvents = new ArrayList<>();
-        this.mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show");
+        this.mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "avcodec-hw+");
         this.embeddedMediaPlayer = mediaPlayerFactory.mediaPlayers().newEmbeddedMediaPlayer();
         this.embeddedMediaPlayer.events().addMediaPlayerEventListener(new MediaPlayerEventAdapter(){
             @Override

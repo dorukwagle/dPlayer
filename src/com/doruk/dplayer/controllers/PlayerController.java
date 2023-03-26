@@ -252,17 +252,6 @@ public class PlayerController implements Controllers {
             mediaPlayer.setTime(curTime / 1000);
         });
 
-        mediaSlider.setOnValueChange((observableValue, oldValue, newValue) -> {
-            var totalTime = durationToMillis(drawer.getSelectedItem()[2]);
-            var ratio = totalTime / mediaSlider.getMax();
-            var curTime = (long) (mediaSlider.getProgressValue() * ratio);
-
-            currentPosition.setText(millisToDuration(curTime));
-            var remainingText = (remainingPosition.getText().charAt(0) == '-' ?
-                    "-" + millisToDuration(totalTime - curTime): drawer.getSelectedItem()[2]);
-            remainingPosition.setText(remainingText);
-        });
-
         remainingPosition.setOnMouseClicked(mouseEvent -> {
             if(remainingPosition.getText().charAt(0) == '-') {
                 remainingPosition.setText(drawer.getSelectedItem()[2]);
@@ -309,10 +298,22 @@ public class PlayerController implements Controllers {
     }
 
     public void trackPlaybackProgress(long newTime){
+        //update slider calculations
         var slider = controlPanel.getSeekBar();
-
         var ratio = mediaPlayer.getDuration() / slider.getMax();
         var sliderPos = newTime / ratio;
+
+        //update the remaining time and current time (calculations)
+        long totalTime = mediaPlayer.getDuration();
+        String remainingText = (remainingPosition.getText().charAt(0) == '-' ?
+                "-" + millisToDuration(totalTime - newTime): drawer.getSelectedItem()[2]);
+
+        //update current time and remaining time
+        Platform.runLater(() -> {
+            currentPosition.setText(millisToDuration(newTime));
+            remainingPosition.setText(remainingText);
+        });
+        //update the slider
         Platform.runLater(()->slider.setValue(sliderPos));
     }
 
