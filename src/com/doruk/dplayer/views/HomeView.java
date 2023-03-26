@@ -64,7 +64,6 @@ public class HomeView extends StackPane {
         itemHolder.getChildren().add(mLay);
         itemHolder.getChildren().add(dirHolder);
 
-
         getChildren().add(itemHolder);
         getChildren().add(bar);
 

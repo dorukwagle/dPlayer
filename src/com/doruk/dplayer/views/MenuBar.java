@@ -3,6 +3,10 @@ package com.doruk.dplayer.views;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.util.List;
 
 public class MenuBar extends VBox {
 
@@ -10,7 +14,7 @@ public class MenuBar extends VBox {
     private MenuItem preference, exit;
     private CheckMenuItem soundOnly;
     private ToggleGroup subtitleToggle, audioTracksToggle, playBackSpeedGroup;
-    private RadioMenuItem addSubtitleMenu;
+    private MenuItem addSubtitleMenu;
 
     public MenuBar(ResourceProvider icons){
         javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
@@ -19,14 +23,22 @@ public class MenuBar extends VBox {
 
         Menu playSpeed = new Menu("Playback Speed");
         RadioMenuItem firstQuartile = new RadioMenuItem("0.25X");
+        firstQuartile.setUserData("0.25");
         RadioMenuItem secondQuartile = new RadioMenuItem("0.5X");
+        secondQuartile.setUserData("0.5");
         RadioMenuItem thirdQuartile = new RadioMenuItem("0.75X");
+        thirdQuartile.setUserData("0.75");
         RadioMenuItem normal = new RadioMenuItem("Normal");
+        normal.setUserData("1");
         normal.setSelected(true);
         RadioMenuItem oneAnd1Quartile = new RadioMenuItem("1.25X");
+        oneAnd1Quartile.setUserData("1.25");
         RadioMenuItem oneAnd2Quartile = new RadioMenuItem("1.5X");
+        oneAnd2Quartile.setUserData("1.5");
         RadioMenuItem oneAnd3Quartile = new RadioMenuItem("1.75X");
+        oneAnd3Quartile.setUserData("1.75");
         RadioMenuItem doubleQuartile = new RadioMenuItem("2X");
+        doubleQuartile.setUserData("2");
         playSpeed.getItems().addAll(firstQuartile, secondQuartile, thirdQuartile, normal, oneAnd1Quartile,
                 oneAnd2Quartile, oneAnd3Quartile, doubleQuartile);
 
@@ -76,6 +88,12 @@ public class MenuBar extends VBox {
         return item;
     }
 
+    public File chooseSubtitleFile(File dir){
+        FileChooser chooser = new FileChooser();
+        chooser.setInitialDirectory(dir);
+        return chooser.showOpenDialog(BaseContainer.getInstance().getStage());
+    }
+
     public MenuItem getPreference() {
         return preference;
     }
@@ -88,19 +106,11 @@ public class MenuBar extends VBox {
         return soundOnly;
     }
 
-    public ToggleGroup getSubtitleToggle() {
-        return subtitleToggle;
-    }
-
-    public ToggleGroup getAudioTracksToggle() {
-        return audioTracksToggle;
-    }
-
     public ToggleGroup getPlayBackSpeedGroup() {
         return playBackSpeedGroup;
     }
 
-    public RadioMenuItem getAddSubtitleMenu() {
+    public MenuItem getAddSubtitleMenu() {
         return addSubtitleMenu;
     }
 }

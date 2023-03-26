@@ -28,6 +28,7 @@ import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 import java.awt.Dimension;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -220,7 +221,21 @@ public class PlayerController implements Controllers {
     }
 
     private void addMenuBarEventListeners(){
+        menuBar.getExit().setOnAction(event -> {
+            mediaPlayer.stop();
+            Platform.exit();
+        });
 
+        menuBar.getPlayBackSpeedGroup().selectedToggleProperty().addListener((observableValue, toggle, t1) -> {
+            mediaPlayer.setPlayBackSpeed(Float.parseFloat(t1.getUserData().toString()));
+        });
+
+        menuBar.getAddSubtitleMenu().setOnAction(event -> {
+            String str = mediaList[0].getParent();
+            File file = menuBar.chooseSubtitleFile(new File(str));
+            menuBar.addSubtitleItem(file.getName().substring(0, 20)).setOnAction(event1 ->
+                    mediaPlayer.setSubtitleFile(file.getAbsolutePath()));
+        });
     }
 
     private void monitorPlaybackAndSeekBar(){

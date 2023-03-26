@@ -219,6 +219,11 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     }
 
     @Override
+    public void setPlayBackSpeed(float speed){
+        embeddedMediaPlayer.controls().setRate(speed);
+    }
+
+    @Override
     public void addOnStartEvents(OnPlaybackStart event) {
         onStartEvents.add(event);
     }

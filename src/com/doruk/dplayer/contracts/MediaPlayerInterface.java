@@ -12,5 +12,6 @@ public interface MediaPlayerInterface extends BasicMediaPlayerInterface{
     void setSubtitle(int id); // set one of the loaded subtitle either from the video or file
     void setAudioTrack(int id); // set one of the available audio track
     void setSubtitleFile(String filename);
+    void setPlayBackSpeed(float speed);
     void scaleToScreen(Dimension dimension); //
 }
