@@ -207,7 +207,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
 
     @Override
     public void nextFrame() {
-
+        embeddedMediaPlayer.controls().nextFrame();
     }
 
     @Override

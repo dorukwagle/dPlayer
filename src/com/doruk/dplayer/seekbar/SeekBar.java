@@ -94,6 +94,11 @@ public class SeekBar extends HBox {
         progressBar.setProgress((double)value / max);
     }
 
+    public void setDoubleValue(double value){
+        double nextValue = (double) Math.round((value/max) * max) / max;
+        progressBar.setProgress(value / max);
+    }
+
     public double getProgressValue(){
         return progressBar.getProgress() * max;
     }

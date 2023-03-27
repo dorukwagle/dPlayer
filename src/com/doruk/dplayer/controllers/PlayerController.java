@@ -21,18 +21,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static com.doruk.dplayer.utilities.DurUtils.*;
+import static com.doruk.dplayer.utilities.DurUtils.durationToMillis;
+import static com.doruk.dplayer.utilities.DurUtils.millisToDuration;
 
 public class PlayerController implements Controllers {
     private ExtendedMediaPlayerInterface mediaPlayer;
@@ -50,6 +50,9 @@ public class PlayerController implements Controllers {
 
     private Label currentPosition, remainingPosition;
     private SeekBar mediaSlider, volumeSlider;
+
+    private boolean toggleOriginalSize = false;
+    private boolean toggleFullScreen = false;
 
     public PlayerController(){
         icons = new ResourceProvider();
@@ -83,6 +86,7 @@ public class PlayerController implements Controllers {
         addControlPanelEventListeners();
         addMenuBarEventListeners();
         mediaPlayer.addOnStartEvents(this::monitorPlaybackAndSeekBar);
+        addKeysListeners();
     }
 
     public PlayerController(Parameters params) {
@@ -388,6 +392,131 @@ public class PlayerController implements Controllers {
         return 0;
     }
 
+    private void addKeysListeners(){
+        KeyCombination ctrlUp = new KeyCodeCombination(KeyCode.UP, KeyCombination.CONTROL_DOWN);
+        KeyCombination ctrlDown = new KeyCodeCombination(KeyCode.DOWN, KeyCombination.CONTROL_DOWN);
+        KeyCombination ctrlRight = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN);
+        KeyCombination ctrlLeft = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN);
+
+        playerView.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+            KeyCode code = event.getCode();
+            if(ctrlUp.match(event)){
+                volumeUp();
+                event.consume();
+                return;
+            }
+            if(ctrlDown.match(event)){
+                volumeDown();
+                event.consume();
+                return;
+            }
+            if(ctrlRight.match(event)){
+                longJumpForward();
+                event.consume();
+                return;
+            }
+            if(ctrlLeft.match(event)){
+                longJumpBackward();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.SPACE) {
+                controlPanel.getPlayPause().fire();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.F){
+                toggleFullScreen();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.O){
+                toggleOriginalVideoSize();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.E){
+                displayNextFrame();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.M){
+                controlPanel.getAudioBtn().fire();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.LEFT){
+                shortJumpBackward();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.RIGHT){
+                shortJumpForward();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.UP){
+                mediumJumpForward();
+                event.consume();
+                return;
+            }
+            if(code == KeyCode.DOWN){
+                mediumJumpBackward();
+                event.consume();
+            }
+        });
+    }
+
+    private void toggleFullScreen(){
+
+    }
+
+    private void toggleOriginalVideoSize(){
+
+    }
+
+    private void displayNextFrame(){
+
+    }
+
+    private void volumeUp(){
+        var curVolume = volumeSlider.getProgressValue();
+        double nextVolume = (curVolume > 145? 150: curVolume + 5);
+        volumeSlider.setDoubleValue(nextVolume);
+    }
+
+    private void volumeDown(){
+        var curVolume = volumeSlider.getProgressValue();
+        double nextVolume = (curVolume < 5? 0: curVolume - 5);
+        volumeSlider.setDoubleValue(nextVolume);
+    }
+
+    private void shortJumpForward(){
+
+    }
+
+    private void shortJumpBackward(){
+
+    }
+
+    private void mediumJumpForward(){
+
+    }
+
+    private void mediumJumpBackward(){
+
+    }
+
+    private void longJumpForward(){
+
+    }
+
+    private void longJumpBackward(){
+
+    }
+
+
+
     @Override
     public Scene getScene(){
         return scene;
@@ -395,9 +524,6 @@ public class PlayerController implements Controllers {
 
     public void onStop(){
         mediaPlayer.stop();
-    }
-    public Button getNext(){
-        return null;
     }
 
     public MenuItem getPreferenceButton(){
