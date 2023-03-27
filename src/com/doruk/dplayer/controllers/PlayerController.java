@@ -385,7 +385,6 @@ public class PlayerController implements Controllers {
                 // add the filename to the drawer
                 int ii = i;
                 Platform.runLater(() -> drawer.addItem(playList.get(ii)));
-//                drawer.addItem(playList[0]);
             }
 
             String totalDuration = millisToDuration(totalDur[0]);
@@ -529,7 +528,7 @@ public class PlayerController implements Controllers {
 
     private void savePlayBackPosition(long position){
         long actualPosition = position;
-        if(actualPosition <= mediaPlayer.getDuration() - 4000)
+        if(actualPosition >= mediaPlayer.getDuration() - 4000)
             actualPosition = 0;
         if(Math.abs(actualPosition - currentPlaybackPosition) < 4000) return;
         preference.setResumePosition(currentMedia, actualPosition);
