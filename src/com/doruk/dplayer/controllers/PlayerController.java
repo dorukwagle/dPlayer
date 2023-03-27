@@ -261,7 +261,7 @@ public class PlayerController implements Controllers {
             var ratio = totalTime / mediaSlider.getMax();
             var curTime = (long) (mediaSlider.getControlValue() * ratio);
 
-            mediaPlayer.setTime(curTime / 1000);
+            mediaPlayer.setTime(curTime);
         });
 
         remainingPosition.setOnMouseClicked(mouseEvent -> {
