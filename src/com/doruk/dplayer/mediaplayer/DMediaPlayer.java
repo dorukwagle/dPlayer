@@ -32,6 +32,8 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     private List<OnPlaybackStart> onStartEvents;
     private Consumer<Long> timeChanged;
 
+    private boolean isPlayingFinished = false;
+
     public DMediaPlayer() {
         onStartEvents = new ArrayList<>();
         this.mediaPlayerFactory = new MediaPlayerFactory("--no-video-title-show", "avcodec-hw+");
@@ -40,6 +42,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
             @Override
             public void playing(MediaPlayer mediaPlayer) {
                 CompletableFuture.runAsync(() -> onStart());
+                CompletableFuture.runAsync(() -> isPlayingFinished = false);
             }
 
             @Override
@@ -54,7 +57,8 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
             public void finished(MediaPlayer mediaPlayer){
                 if(onComplete == null)
                     return;
-                Platform.runLater(onComplete::onComplete);
+                CompletableFuture.runAsync(onComplete::onComplete);
+                CompletableFuture.runAsync(() -> isPlayingFinished = true);
             }
 
             @Override
@@ -142,18 +146,18 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     }
 
     @Override
-    public void seekForward(int seconds) {
+    public void seekForward(long seconds) {
         embeddedMediaPlayer.controls().skipTime(seconds * 1000L);
     }
 
     @Override
-    public void seekBackward(int second) {
+    public void seekBackward(long second) {
         embeddedMediaPlayer.controls().skipTime(-(second * 1000L));
     }
 
     @Override
-    public void setTime(long seconds){
-        embeddedMediaPlayer.controls().setTime(seconds * 1000);
+    public void setTime(long millis){
+        embeddedMediaPlayer.controls().setTime(millis);
     }
 
     @Override
@@ -170,6 +174,8 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     public boolean isPlaying(){
         return embeddedMediaPlayer.status().isPlaying();
     }
+
+
     @Override
     public void setOnComplete(MediaPlayCompleted function) {
         onComplete = function;

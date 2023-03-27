@@ -7,12 +7,12 @@ import com.doruk.dplayer.models.HomeModel;
 import com.doruk.dplayer.seekbar.SeekBar;
 import com.doruk.dplayer.utilities.PreferencesManager;
 import com.doruk.dplayer.utilities.ResourceProvider;
-import com.doruk.dplayer.views.Drawer;
+import com.doruk.dplayer.views.*;
 import com.doruk.dplayer.views.MenuBar;
-import com.doruk.dplayer.views.PlayerView;
-import com.doruk.dplayer.views.VideoControlPanel;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
@@ -51,6 +51,8 @@ public class PlayerController implements Controllers {
     private Label currentPosition, remainingPosition;
     private SeekBar mediaSlider, volumeSlider;
 
+    private String currentMedia = null;
+    private long currentPlaybackPosition = 0;
     private boolean toggleOriginalSize = false;
     private boolean toggleFullScreen = false;
 
@@ -87,6 +89,8 @@ public class PlayerController implements Controllers {
         addMenuBarEventListeners();
         mediaPlayer.addOnStartEvents(this::monitorPlaybackAndSeekBar);
         addKeysListeners();
+
+
     }
 
     public PlayerController(Parameters params) {
@@ -153,13 +157,17 @@ public class PlayerController implements Controllers {
         mediaPlayer.addOnStartEvents(() -> {
             long resume = getResumeDuration(filename);
             if(resume > 0)
-                mediaPlayer.addOnStartEvents(() -> mediaPlayer.setTime(resume));
+                mediaPlayer.setTime(resume);
         });
         mediaPlayer.setOnTimeChanged(this::trackPlaybackProgress);
     }
 
     private void playMedia(){
-        playMedia(getNextMedia());
+        //reset the playback position for tracking resume positions
+        currentPlaybackPosition = 0;
+        var media = getNextMedia();
+        currentMedia = media;
+        playMedia(media);
     }
 
     private String getNextMedia(){
@@ -319,6 +327,9 @@ public class PlayerController implements Controllers {
         });
         //update the slider
         Platform.runLater(()->slider.setValue(sliderPos));
+
+        //finally save the current playback position for resuming the video next time
+        CompletableFuture.runAsync(() -> savePlayBackPosition(newTime));
     }
 
     private void fetchVideoSubtitles(){
@@ -385,7 +396,7 @@ public class PlayerController implements Controllers {
     private long getResumeDuration(String filename){
         if(preference.isResumePlayback()){
             var time = drawer.getSelectedItem()[2];
-            var duration = durationToMillis(drawer.getSelectedItem()[2]) / 1000;
+            var duration = durationToMillis(time) / 1000 / 60;
             if(duration >= preference.getResumePlaybackLength())
                 return preference.getResumePosition(filename);
         }
@@ -398,7 +409,7 @@ public class PlayerController implements Controllers {
         KeyCombination ctrlRight = new KeyCodeCombination(KeyCode.RIGHT, KeyCombination.CONTROL_DOWN);
         KeyCombination ctrlLeft = new KeyCodeCombination(KeyCode.LEFT, KeyCombination.CONTROL_DOWN);
 
-        playerView.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+        playerView.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             KeyCode code = event.getCode();
             if(ctrlUp.match(event)){
                 volumeUp();
@@ -476,7 +487,7 @@ public class PlayerController implements Controllers {
     }
 
     private void displayNextFrame(){
-
+        mediaPlayer.nextFrame();
     }
 
     private void volumeUp(){
@@ -492,30 +503,42 @@ public class PlayerController implements Controllers {
     }
 
     private void shortJumpForward(){
-
+        mediaPlayer.seekForward(preference.getShortJumpDuration());
     }
 
     private void shortJumpBackward(){
-
+        mediaPlayer.seekBackward(preference.getShortJumpDuration());
     }
 
     private void mediumJumpForward(){
-
+        mediaPlayer.seekForward(preference.getMediumJumpDuration());
     }
 
     private void mediumJumpBackward(){
-
+        mediaPlayer.seekBackward(preference.getMediumJumpDuration());
     }
 
     private void longJumpForward(){
-
+        mediaPlayer.seekForward(preference.getLongJumpDuration());
     }
 
     private void longJumpBackward(){
-
+        mediaPlayer.seekBackward(preference.getLongJumpDuration());
     }
 
 
+    private void savePlayBackPosition(long position){
+        long actualPosition = position;
+        if(actualPosition <= mediaPlayer.getDuration() - 4000)
+            actualPosition = 0;
+        if(Math.abs(actualPosition - currentPlaybackPosition) < 4000) return;
+        preference.setResumePosition(currentMedia, actualPosition);
+        currentPlaybackPosition = actualPosition;
+    }
+
+    private void scaleOnScreenResize(){
+
+    }
 
     @Override
     public Scene getScene(){

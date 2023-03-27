@@ -78,11 +78,11 @@ public class PreferencesManager {
     }
 
     public void setResumePosition(String filename, long position){
-        pref.putLong(filename, position);
+        pref.putLong(String.valueOf(filename.hashCode()), position);
     }
 
     public long getResumePosition(String filename){
-        return pref.getLong(filename, 0);
+        return pref.getLong(String.valueOf(filename.hashCode()), 0);
     }
 
     public int getVolume(){
