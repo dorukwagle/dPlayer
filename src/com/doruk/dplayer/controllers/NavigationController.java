@@ -112,8 +112,10 @@ public class NavigationController {
     private void configWindow(){
         // set the screen size
         var bounds = Screen.getPrimary().getVisualBounds();
-        stage.setWidth((int) (bounds.getWidth() * screenSize));
-        stage.setHeight((int) (bounds.getHeight() * screenSize));
+        var width = (int) (bounds.getWidth() * screenSize);
+        float aspectRatio = (float) 16/9;
+        stage.setWidth(width);
+        stage.setHeight(width/aspectRatio + 50);
         // position the window at the center
         double x = bounds.getMinX() + (bounds.getWidth() - stage.getWidth()) * 0.5;
         double y = bounds.getMinY() + (bounds.getHeight() - stage.getHeight()) * 0.4;

@@ -92,16 +92,11 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
         double heightRatio = vHeight / height;
         double widthRatio = vWidth / width;
         mediaView.setPreserveRatio(true);
-        System.out.println("givenDim: " + dimension.getWidth() + ":" + dimension.getHeight());
-        System.out.println("fitToHeight: widthIs:" + (vWidth / heightRatio));
-        System.out.println("fitToWidth: heightIs:" + (vHeight / widthRatio));
         if ( vWidth / heightRatio <= width) {
             mediaView.setFitHeight(height);
-            System.out.println("fitted to height: ");
         }
         else if(vHeight / widthRatio <= height) {
             mediaView.setFitWidth(width);
-            System.out.println("fitted to width: ");
             //here check again if while fitting the width, the height exceeds the bounds
         }
         else{
