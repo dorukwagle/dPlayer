@@ -22,6 +22,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.stage.Stage;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
@@ -56,7 +57,10 @@ public class PlayerController implements Controllers {
     private boolean toggleOriginalSize = false;
     private boolean toggleFullScreen = false;
 
+    private Stage stage;
+
     public PlayerController(){
+        stage = BaseContainer.getInstance().getStage();
         icons = new ResourceProvider();
         preference = new PreferencesManager();
 
@@ -90,7 +94,15 @@ public class PlayerController implements Controllers {
         mediaPlayer.addOnStartEvents(this::monitorPlaybackAndSeekBar);
         addKeysListeners();
 
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            if(!playerView.isFocusWithin()) return;
+            scaleOnScreenResize();
+        });
 
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if(!playerView.isFocusWithin()) return;
+            scaleOnScreenResize();
+        });
     }
 
     public PlayerController(Parameters params) {
@@ -132,6 +144,7 @@ public class PlayerController implements Controllers {
                 float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
                 playerViewDimensions = new Dimension();
                 playerViewDimensions.setSize(playerView.getWidth(), height);
+                System.out.println(playerViewDimensions.toString());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -482,7 +495,14 @@ public class PlayerController implements Controllers {
     }
 
     private void toggleOriginalVideoSize(){
-
+        if(toggleOriginalSize) {
+            mediaPlayer.scaleToScreen(playerViewDimensions);
+            toggleOriginalSize = false;
+        }
+        else {
+            mediaPlayer.setOriginalSize();
+            toggleOriginalSize = true;
+        }
     }
 
     private void displayNextFrame(){
@@ -525,7 +545,6 @@ public class PlayerController implements Controllers {
         mediaPlayer.seekBackward(preference.getLongJumpDuration());
     }
 
-
     private void savePlayBackPosition(long position){
         long actualPosition = position;
         if(actualPosition >= mediaPlayer.getDuration() - 4000)
@@ -536,7 +555,11 @@ public class PlayerController implements Controllers {
     }
 
     private void scaleOnScreenResize(){
-
+        float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
+        playerViewDimensions = new Dimension();
+        playerViewDimensions.setSize(playerView.getWidth(), height);
+        System.out.println(playerViewDimensions.toString());
+        mediaPlayer.scaleToScreen(playerViewDimensions);
     }
 
     @Override
