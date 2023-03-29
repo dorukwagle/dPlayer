@@ -65,7 +65,6 @@ public class VideoControlPanel extends VBox {
         volumeLabel = new Label("25%");
 
         btnBox.getChildren().addAll(playPause, previousBtn, stopBtn, nextBtn);
-//        volControl.getChildren().addAll(audioBtn, volumeSlider, volumeLabel);
         volControl.setLeft(audioBtn);
         volControl.setCenter(volumeSlider);
         volControl.setRight(volumeLabel);
@@ -78,22 +77,7 @@ public class VideoControlPanel extends VBox {
         controlBase.setTop(sliderBox);
         controlBase.setBottom(btnBoxBase);
         getChildren().add(panel);
-    }
 
-
-    private void customizeFill(Slider slider){
-        slider.valueProperty().addListener((obs, oldValue, newValue) -> {
-            double percentage = 100.0 * newValue.doubleValue() / slider.getMax();
-            String style = String.format(
-                    "-track-color: linear-gradient(to right, " +
-                            "-fx-accent 0%%, " +
-                            "-fx-accent %1$.1f%%, " +
-                            "-default-track-color %1$.1f%%, " +
-                            "-default-track-color 100%%);",
-                    percentage);
-//            slider.setOpacity(0.01);
-            slider.setStyle(style);
-        });
     }
 
     public Button getDrawerBtn() {

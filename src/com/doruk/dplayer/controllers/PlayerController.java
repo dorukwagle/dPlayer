@@ -492,7 +492,7 @@ public class PlayerController implements Controllers {
 
     private void toggleFullScreen(){
         if(!toggleFullScreen){
-            Dimension dim = getFullScreenDimension();
+            Dimension dim = getScreenSize("full");
             lastScreenDimension = playerViewDimensions;
             stage.setFullScreen(true);
             mediaPlayer.scaleToScreen(dim);
@@ -504,6 +504,7 @@ public class PlayerController implements Controllers {
     }
 
     private void toggleOriginalVideoSize(){
+        //maximize the display, store the current size etc
         if(toggleOriginalSize)
             mediaPlayer.scaleToScreen(playerViewDimensions);
         else
@@ -567,8 +568,9 @@ public class PlayerController implements Controllers {
         mediaPlayer.scaleToScreen(playerViewDimensions);
     }
 
-    private Dimension getFullScreenDimension(){
-        var bounds = Screen.getPrimary().getBounds();
+    private Dimension getScreenSize(String mode){
+        var screen = Screen.getPrimary();
+        var bounds = (mode.equals("full")? screen.getBounds(): screen.getVisualBounds());
         var dim = new Dimension();
         dim.setSize(bounds.getWidth(), bounds.getHeight());
         return dim;

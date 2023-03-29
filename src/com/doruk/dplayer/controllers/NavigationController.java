@@ -3,6 +3,7 @@ package com.doruk.dplayer.controllers;
 import com.doruk.dplayer.contracts.Controllers;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import com.doruk.dplayer.views.BaseContainer;
+import com.doruk.dplayer.views.PlayerView;
 import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
@@ -47,18 +48,6 @@ public class NavigationController {
             views.push(controllers.get("home"));
         }
         addListeners();
-//        scene.getRoot().setStyle("");
-//        KeyCombination cntrlZ = new KeyCodeCombination(KeyCode.Z, KeyCodeCombination.CONTROL_DOWN);
-//        scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
-//            @Override
-//            public void handle(KeyEvent event) {
-//                if(cntrlZ.match(event)){
-//                    System.out.println("combo: " + cntrlZ);
-//                    return;
-//                }
-//                System.out.println(event.getCode());
-//            }
-//        });
         this.stage.setScene(scene);
     }
 
