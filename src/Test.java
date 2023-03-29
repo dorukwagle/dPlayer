@@ -1,45 +1,47 @@
-import com.doruk.dplayer.seekbar.SeekBar;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+//{ Driver Code Starts
+import java.lang.*;
+import java.io.*;
+import java.util.*;
+class Test
+{
+    public static void main (String[] args) throws IOException
+    {
 
+            System.out.println(Solution.minJumps(new int[]{9, 10, 1, 2, 3, 4, 8, 0, 0, 0, 0, 0, 0, 0, 1}));
+        }
 
-public class Test extends Application  {
-
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("ComboBox Experiment 1");
-
-        ComboBox comboBox = new ComboBox();
-
-        comboBox.getItems().add("Choice 1");
-        comboBox.getItems().add("Choice 2");
-        comboBox.getItems().add("Choice 3");
-
-
-        HBox hbox = new HBox(comboBox);
-
-        SeekBar seekBar = new SeekBar();
-        seekBar.setMax(100);
-        seekBar.setMin(0);
-        seekBar.setValue(20);
-        HBox hhbox = new HBox(seekBar);
-
-        VBox vbox = new VBox(hbox, hhbox);
-        vbox.setFillWidth(true);
-
-
-        Scene scene = new Scene(vbox);
-        scene.getStylesheets().add(this.getClass().getResource("/assets/dark_theme_adv.css").toString());
-        primaryStage.setScene(scene);
-        primaryStage.show();
+    class Solution{
+        static int minJumps(int[] arr){
+            // your code here
+            int len = arr.length;
+            int jumps = 0;
+            int pointer = 0;
+            while(pointer < len - 1){
+                if(arr[pointer] == 0 && pointer < len-1) return -1;
+                if(arr[pointer] == 1) {
+                    pointer++;
+                    jumps++;
+                    continue;
+                }
+                int diff = len - (arr[pointer] + pointer + 1);
+                if(diff <= 0) return ++jumps;
+                int cursor = 1;
+                for(int i=pointer+1; i <= arr[pointer]; ++i){
+                    int df = len - (arr[i] + cursor);
+                    if(df < diff){
+                        diff = df;
+                        pointer = i;
+                    }
+                    cursor++;
+                }
+                jumps++;
+            }
+            return jumps;
+        }
     }
 
-    public static void main(String[] args) {
-        Application.launch(args);
-    }
 }
+
+// } Driver Code Ends
+
+

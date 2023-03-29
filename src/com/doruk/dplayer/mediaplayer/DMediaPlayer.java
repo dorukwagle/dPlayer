@@ -127,13 +127,6 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     }
 
     @Override
-    public void setFullScreen(Stage stage){
-        embeddedMediaPlayer.fullScreen().strategy(new JavaFXFullScreenStrategy(stage));
-        embeddedMediaPlayer.fullScreen().set(true);
-        embeddedMediaPlayer.fullScreen().toggle();
-    }
-
-    @Override
     public void setOriginalSize(){
         Dimension videoDimension = embeddedMediaPlayer.video().videoDimension();
         mediaView.setPreserveRatio(false);

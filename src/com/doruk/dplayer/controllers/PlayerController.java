@@ -7,13 +7,12 @@ import com.doruk.dplayer.models.HomeModel;
 import com.doruk.dplayer.seekbar.SeekBar;
 import com.doruk.dplayer.utilities.PreferencesManager;
 import com.doruk.dplayer.utilities.ResourceProvider;
-import com.doruk.dplayer.views.*;
 import com.doruk.dplayer.views.MenuBar;
+import com.doruk.dplayer.views.*;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.geometry.Point2D;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
@@ -22,6 +21,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
@@ -46,6 +46,7 @@ public class PlayerController implements Controllers {
     private File[] mediaList;
     private int currentPlaylistPosition = -1;
     private Dimension playerViewDimensions;
+    private Dimension lastScreenDimension;
     private PreferencesManager preference;
     private ResourceProvider icons;
 
@@ -144,7 +145,6 @@ public class PlayerController implements Controllers {
                 float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
                 playerViewDimensions = new Dimension();
                 playerViewDimensions.setSize(playerView.getWidth(), height);
-                System.out.println(playerViewDimensions.toString());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -491,18 +491,24 @@ public class PlayerController implements Controllers {
     }
 
     private void toggleFullScreen(){
-
+        if(!toggleFullScreen){
+            Dimension dim = getFullScreenDimension();
+            lastScreenDimension = playerViewDimensions;
+            stage.setFullScreen(true);
+            mediaPlayer.scaleToScreen(dim);
+        }else{
+            stage.setFullScreen(false);
+            mediaPlayer.scaleToScreen(lastScreenDimension);
+        }
+        toggleFullScreen = !toggleFullScreen;
     }
 
     private void toggleOriginalVideoSize(){
-        if(toggleOriginalSize) {
+        if(toggleOriginalSize)
             mediaPlayer.scaleToScreen(playerViewDimensions);
-            toggleOriginalSize = false;
-        }
-        else {
+        else
             mediaPlayer.setOriginalSize();
-            toggleOriginalSize = true;
-        }
+        toggleOriginalSize = !toggleOriginalSize;
     }
 
     private void displayNextFrame(){
@@ -558,8 +564,14 @@ public class PlayerController implements Controllers {
         float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
         playerViewDimensions = new Dimension();
         playerViewDimensions.setSize(playerView.getWidth(), height);
-        System.out.println(playerViewDimensions.toString());
         mediaPlayer.scaleToScreen(playerViewDimensions);
+    }
+
+    private Dimension getFullScreenDimension(){
+        var bounds = Screen.getPrimary().getBounds();
+        var dim = new Dimension();
+        dim.setSize(bounds.getWidth(), bounds.getHeight());
+        return dim;
     }
 
     @Override

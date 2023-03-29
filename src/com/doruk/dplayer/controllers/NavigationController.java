@@ -5,6 +5,7 @@ import com.doruk.dplayer.utilities.ResourceProvider;
 import com.doruk.dplayer.views.BaseContainer;
 import javafx.application.Application.Parameters;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -21,6 +22,7 @@ public class NavigationController {
 
     public NavigationController(Parameters params){
         stage = BaseContainer.getInstance().getStage();
+        stage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         controllers = new HashMap<>();
         views = new Stack<>();
         resourceProvider = new ResourceProvider();

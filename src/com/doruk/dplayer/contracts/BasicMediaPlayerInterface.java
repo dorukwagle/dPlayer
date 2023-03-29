@@ -18,7 +18,6 @@ public interface BasicMediaPlayerInterface {
     int getVolume();
     void setTime(long time);
     void setOnComplete(MediaPlayCompleted mediaPlayCompleted);
-    void setFullScreen(Stage stage);
 
     void setOriginalSize();
 
