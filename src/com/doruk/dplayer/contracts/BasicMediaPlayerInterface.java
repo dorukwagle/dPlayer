@@ -3,6 +3,8 @@ package com.doruk.dplayer.contracts;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.awt.*;
+
 public interface BasicMediaPlayerInterface {
     void load(String filePath); // loads the media file
 //    void reload() throws FileNotFoundException; // reloads and resets player position to 0
@@ -19,7 +21,7 @@ public interface BasicMediaPlayerInterface {
     void setTime(long time);
     void setOnComplete(MediaPlayCompleted mediaPlayCompleted);
 
-    void setOriginalSize();
+    void setOriginalSize(Dimension dimension);
 
     ImageView getMediaView();
 

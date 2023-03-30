@@ -69,7 +69,7 @@ public class PlayerController implements Controllers {
         mediaView = mediaPlayer.getMediaView();
         menuBar = new MenuBar(icons);
         controlPanel = new VideoControlPanel(icons);
-        playerView = new PlayerView(mediaView, menuBar, controlPanel);
+        playerView = new PlayerView(mediaView, menuBar, controlPanel, icons);
         drawer = playerView.getDrawer();
         scene = new Scene(playerView);
 
@@ -104,6 +104,7 @@ public class PlayerController implements Controllers {
             if(!playerView.isFocusWithin()) return;
             scaleOnScreenResize();
         });
+//        manageFullScreenControls();
     }
 
     public PlayerController(Parameters params) {
@@ -145,6 +146,7 @@ public class PlayerController implements Controllers {
                 float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
                 playerViewDimensions = new Dimension();
                 playerViewDimensions.setSize(playerView.getWidth(), height);
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -496,19 +498,27 @@ public class PlayerController implements Controllers {
             lastScreenDimension = playerViewDimensions;
             stage.setFullScreen(true);
             mediaPlayer.scaleToScreen(dim);
+            prepareFullScreenControls();
         }else{
             stage.setFullScreen(false);
             mediaPlayer.scaleToScreen(lastScreenDimension);
+            playerViewDimensions = lastScreenDimension;
+            removeFullScreenControls();
         }
         toggleFullScreen = !toggleFullScreen;
     }
 
     private void toggleOriginalVideoSize(){
         //maximize the display, store the current size etc
-        if(toggleOriginalSize)
+        if(toggleOriginalSize) {
             mediaPlayer.scaleToScreen(playerViewDimensions);
-        else
-            mediaPlayer.setOriginalSize();
+            playerView.showPopup("Scaled to Screen");
+        }
+        else {
+            var dim = getScreenSize("visible");
+            mediaPlayer.setOriginalSize(dim);
+            playerView.showPopup("Video's Original Size");
+        }
         toggleOriginalSize = !toggleOriginalSize;
     }
 
@@ -573,7 +583,42 @@ public class PlayerController implements Controllers {
         var bounds = (mode.equals("full")? screen.getBounds(): screen.getVisualBounds());
         var dim = new Dimension();
         dim.setSize(bounds.getWidth(), bounds.getHeight());
+        if(mode.equals("visible"))
+            dim.setSize(bounds.getWidth(), bounds.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
         return dim;
+    }
+
+    private void manageFullScreenControls(){
+        float opacity = 0.7f;
+        menuBar.setOnMouseEntered(mouseEvent -> {
+            if(toggleFullScreen)
+                menuBar.setOpacity(opacity);
+        });
+
+        menuBar.setOnMouseExited(mouseEvent -> {
+            if(toggleFullScreen)
+             menuBar.setOpacity(0);
+        });
+
+        controlPanel.setOnMouseEntered(mouseEvent -> {
+            if(toggleFullScreen)
+                controlPanel.setOpacity(opacity);
+        });
+
+        controlPanel.setOnMouseExited(mouseEvent -> {
+            if(toggleFullScreen)
+                controlPanel.setOpacity(0);
+        });
+    }
+
+    private void prepareFullScreenControls(){
+        menuBar.setOpacity(0);
+        controlPanel.setOpacity(0);
+    }
+
+    private void removeFullScreenControls(){
+        menuBar.setOpacity(1);
+        controlPanel.setOpacity(1);
     }
 
     @Override
