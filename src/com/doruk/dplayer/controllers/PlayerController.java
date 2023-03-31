@@ -522,11 +522,10 @@ public class PlayerController implements Controllers {
 
         Runnable task = () -> {
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1500);
                 Platform.runLater(() -> displayArea.setCursor(Cursor.NONE));
-                System.out.println("cursor hidden");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+            } catch (InterruptedException ignored) {
+
             }
         };
 
@@ -537,11 +536,17 @@ public class PlayerController implements Controllers {
             }
         });
 
-        displayArea.setOnMouseMoved(mouseEvent -> {
+        displayArea.addEventFilter(MouseEvent.MOUSE_ENTERED, mouseEvent -> {
+           mouseEvent.consume();
+           displayArea.setCursor(Cursor.NONE);
+        });
+
+        displayArea.addEventHandler(MouseEvent.MOUSE_MOVED, mouseEvent -> {
             displayArea.setCursor(Cursor.DEFAULT);
             if(thread[0] != null)
                 thread[0].interrupt();
             thread[0] = new Thread(task);
+            thread[0].start();
         });
     }
 
