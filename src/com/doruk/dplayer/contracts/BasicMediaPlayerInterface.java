@@ -21,7 +21,7 @@ public interface BasicMediaPlayerInterface {
     void setTime(long time);
     void setOnComplete(MediaPlayCompleted mediaPlayCompleted);
 
-    void setOriginalSize(Dimension dimension);
+    void setOriginalSize();
 
     ImageView getMediaView();
 

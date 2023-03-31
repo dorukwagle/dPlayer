@@ -127,7 +127,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
     }
 
     @Override
-    public void setOriginalSize(Dimension dimension){
+    public void setOriginalSize(){
         Dimension videoDimension = embeddedMediaPlayer.video().videoDimension();
         mediaView.setPreserveRatio(false);
         mediaView.setFitHeight(videoDimension.getHeight());

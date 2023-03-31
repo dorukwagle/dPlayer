@@ -95,16 +95,9 @@ public class PlayerController implements Controllers {
         mediaPlayer.addOnStartEvents(this::monitorPlaybackAndSeekBar);
         addKeysListeners();
 
-        stage.widthProperty().addListener((observable, oldValue, newValue) -> {
-            if(!playerView.isFocusWithin()) return;
-            scaleOnScreenResize();
-        });
-
-        stage.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if(!playerView.isFocusWithin()) return;
-            scaleOnScreenResize();
-        });
-//        manageFullScreenControls();
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> scaleOnScreenResize());
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> scaleOnScreenResize());
+        manageFullScreenControls();
     }
 
     public PlayerController(Parameters params) {
@@ -143,10 +136,7 @@ public class PlayerController implements Controllers {
             try {
                 Thread.sleep(500);
                 // fit the media player height to the screen
-                float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
-                playerViewDimensions = new Dimension();
-                playerViewDimensions.setSize(playerView.getWidth(), height);
-
+                playerViewDimensions = getScreenSize("visible");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -497,6 +487,7 @@ public class PlayerController implements Controllers {
             Dimension dim = getScreenSize("full");
             lastScreenDimension = playerViewDimensions;
             stage.setFullScreen(true);
+            playerViewDimensions = dim;
             mediaPlayer.scaleToScreen(dim);
             prepareFullScreenControls();
         }else{
@@ -515,8 +506,7 @@ public class PlayerController implements Controllers {
             playerView.showPopup("Scaled to Screen");
         }
         else {
-            var dim = getScreenSize("visible");
-            mediaPlayer.setOriginalSize(dim);
+            mediaPlayer.setOriginalSize();
             playerView.showPopup("Video's Original Size");
         }
         toggleOriginalSize = !toggleOriginalSize;
@@ -572,24 +562,27 @@ public class PlayerController implements Controllers {
     }
 
     private void scaleOnScreenResize(){
-        float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
-        playerViewDimensions = new Dimension();
-        playerViewDimensions.setSize(playerView.getWidth(), height);
+        if(!playerView.isFocusWithin()) return;
+        playerViewDimensions = getScreenSize("visible");
         mediaPlayer.scaleToScreen(playerViewDimensions);
     }
 
     private Dimension getScreenSize(String mode){
-        var screen = Screen.getPrimary();
-        var bounds = (mode.equals("full")? screen.getBounds(): screen.getVisualBounds());
         var dim = new Dimension();
-        dim.setSize(bounds.getWidth(), bounds.getHeight());
-        if(mode.equals("visible"))
-            dim.setSize(bounds.getWidth(), bounds.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
+        if(mode.equals("full")){
+            var screen = Screen.getPrimary();
+            var bounds = screen.getBounds();
+            dim.setSize(bounds.getWidth(), bounds.getHeight());
+        }
+        else if(mode.equals("visible")) {
+            float height = (float) (playerView.getHeight() - menuBar.getHeight() - controlPanel.getHeight());
+            dim.setSize(scene.getWidth(), height);
+        }
         return dim;
     }
 
     private void manageFullScreenControls(){
-        float opacity = 0.7f;
+        float opacity = 0.8f;
         menuBar.setOnMouseEntered(mouseEvent -> {
             if(toggleFullScreen)
                 menuBar.setOpacity(opacity);

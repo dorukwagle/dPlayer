@@ -3,14 +3,12 @@ package com.doruk.dplayer.views;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
@@ -21,16 +19,19 @@ import java.util.concurrent.CompletableFuture;
 public class PlayerView extends StackPane {
 
     private Drawer drawer;
-    private StackPane playerHolder;
+    private BorderPane barLay;
     private Text popupLabel;
     private Popup popup;
 
     public PlayerView(ImageView mediaView, MenuBar menuBar, VideoControlPanel controlPanel, ResourceProvider icons) {
         var dummyControl = new VideoControlPanel(icons);
         var dummyMenu = new MenuBar(icons);
+        dummyMenu.setVisible(false);
+        dummyControl.setVisible(false);
 
         BorderPane playerLay = new BorderPane();
-        BorderPane barLay = new BorderPane();
+        playerLay.setBackground(Background.fill(Paint.valueOf("black")));
+        barLay = new BorderPane();
         menuBar.setMaxHeight(0);
         controlPanel.setMaxHeight(0);
         barLay.setTop(menuBar);
@@ -44,8 +45,7 @@ public class PlayerView extends StackPane {
 
         playerLay.setTop(dummyMenu);
 
-
-        playerHolder = new StackPane();
+        StackPane playerHolder = new StackPane();
         playerHolder.setBackground(Background.fill(Paint.valueOf("black")));
         StackPane.setAlignment(mediaView, Pos.CENTER);
         playerHolder.getChildren().add(mediaView);
@@ -86,7 +86,7 @@ public class PlayerView extends StackPane {
         return drawer;
     }
 
-    public StackPane getPlayerHolder() {
-        return playerHolder;
+    public BorderPane getDisplayArea() {
+        return barLay ;
     }
 }
