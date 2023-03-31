@@ -273,15 +273,8 @@ public class PlayerController implements Controllers {
             mediaPlayer.setTime(curTime);
         });
 
-        remainingPosition.setOnMouseClicked(mouseEvent -> {
-            if(remainingPosition.getText().charAt(0) == '-') {
-                remainingPosition.setText(drawer.getSelectedItem()[2]);
-                return;
-            }
-            var curTime = durationToMillis(currentPosition.getText());
-            var totalTime = durationToMillis(remainingPosition.getText());
-            remainingPosition.setText("-" + millisToDuration(totalTime - curTime));
-        });
+        remainingPosition.setOnMouseClicked(mouseEvent ->
+                preference.setShowRemainingTime(!preference.getShowRemainingTime()));
 
         // show time popups while playing hovering on the slider
         mediaSlider.setShowPopup(this::showPlayerPopup);
@@ -326,7 +319,7 @@ public class PlayerController implements Controllers {
 
         //update the remaining time and current time (calculations)
         long totalTime = mediaPlayer.getDuration();
-        String remainingText = (remainingPosition.getText().charAt(0) == '-' ?
+        String remainingText = (preference.getShowRemainingTime() ?
                 "-" + millisToDuration(totalTime - newTime): drawer.getSelectedItem()[2]);
 
         //update current time and remaining time
@@ -523,7 +516,7 @@ public class PlayerController implements Controllers {
         Runnable task = () -> {
             try {
                 Thread.sleep(1500);
-                Platform.runLater(() -> displayArea.setCursor(Cursor.NONE));
+                Platform.runLater(() -> scene.setCursor(Cursor.NONE));
             } catch (InterruptedException ignored) {
 
             }
@@ -538,11 +531,11 @@ public class PlayerController implements Controllers {
 
         displayArea.addEventFilter(MouseEvent.MOUSE_ENTERED, mouseEvent -> {
            mouseEvent.consume();
-           displayArea.setCursor(Cursor.NONE);
+           scene.setCursor(Cursor.NONE);
         });
 
         displayArea.addEventHandler(MouseEvent.MOUSE_MOVED, mouseEvent -> {
-            displayArea.setCursor(Cursor.DEFAULT);
+            scene.setCursor(Cursor.DEFAULT);
             if(thread[0] != null)
                 thread[0].interrupt();
             thread[0] = new Thread(task);

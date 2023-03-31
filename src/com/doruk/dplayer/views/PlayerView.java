@@ -33,7 +33,6 @@ public class PlayerView extends StackPane {
         BorderPane playerLay = new BorderPane();
         playerLay.setBackground(Background.fill(Paint.valueOf("black")));
         barLay = new BorderPane();
-        barLay.setCursor(Cursor.NONE);
         menuBar.setMaxHeight(0);
         controlPanel.setMaxHeight(0);
         barLay.setTop(menuBar);

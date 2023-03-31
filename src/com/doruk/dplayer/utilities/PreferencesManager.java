@@ -11,6 +11,7 @@ public class PreferencesManager {
     public void resetDefault(){
         pref.putBoolean("lightThemeChecked", false);
         pref.putBoolean("resumePlayback", true);
+        pref.putBoolean("showRemainingTime", true);
         pref.putLong("resumePlaybackLongerThan", 12); // minutes
 
         pref.put("shortBackJump", "LEFT");
@@ -91,5 +92,13 @@ public class PreferencesManager {
 
     public void setVolume(int volume){
         pref.putInt("volume", volume);
+    }
+
+    public void setShowRemainingTime(boolean bool){
+        pref.putBoolean("showRemainingTime", bool);
+    }
+
+    public boolean getShowRemainingTime(){
+        return pref.getBoolean("showRemainingTime", false);
     }
 }
