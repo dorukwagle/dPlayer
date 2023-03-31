@@ -3,6 +3,7 @@ package com.doruk.dplayer.views;
 import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
@@ -32,6 +33,7 @@ public class PlayerView extends StackPane {
         BorderPane playerLay = new BorderPane();
         playerLay.setBackground(Background.fill(Paint.valueOf("black")));
         barLay = new BorderPane();
+        barLay.setCursor(Cursor.NONE);
         menuBar.setMaxHeight(0);
         controlPanel.setMaxHeight(0);
         barLay.setTop(menuBar);

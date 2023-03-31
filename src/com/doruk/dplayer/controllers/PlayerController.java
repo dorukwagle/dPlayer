@@ -12,7 +12,7 @@ import com.doruk.dplayer.views.*;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
-import javafx.geometry.Rectangle2D;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.control.Button;
@@ -31,6 +31,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.doruk.dplayer.utilities.DurUtils.durationToMillis;
 import static com.doruk.dplayer.utilities.DurUtils.millisToDuration;
@@ -97,6 +99,8 @@ public class PlayerController implements Controllers {
 
         stage.widthProperty().addListener((observable, oldValue, newValue) -> scaleOnScreenResize());
         stage.heightProperty().addListener((observable, oldValue, newValue) -> scaleOnScreenResize());
+
+        listenMouseActivitiesOnDisplay();
         manageFullScreenControls();
     }
 
@@ -510,6 +514,35 @@ public class PlayerController implements Controllers {
             playerView.showPopup("Video's Original Size");
         }
         toggleOriginalSize = !toggleOriginalSize;
+    }
+
+    private void listenMouseActivitiesOnDisplay(){
+        var displayArea = playerView.getDisplayArea();
+        final var thread = new Thread[1];
+
+        Runnable task = () -> {
+            try {
+                Thread.sleep(3000);
+                Platform.runLater(() -> displayArea.setCursor(Cursor.NONE));
+                System.out.println("cursor hidden");
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        };
+
+        displayArea.setOnMouseClicked(mouseEvent -> {
+            if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                if(mouseEvent.getClickCount() == 2)
+                    toggleFullScreen();
+            }
+        });
+
+        displayArea.setOnMouseMoved(mouseEvent -> {
+            displayArea.setCursor(Cursor.DEFAULT);
+            if(thread[0] != null)
+                thread[0].interrupt();
+            thread[0] = new Thread(task);
+        });
     }
 
     private void displayNextFrame(){
