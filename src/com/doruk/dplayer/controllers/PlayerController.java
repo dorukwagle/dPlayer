@@ -31,6 +31,8 @@ import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 import java.awt.*;
+import java.awt.desktop.SystemSleepEvent;
+import java.awt.desktop.SystemSleepListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -109,6 +111,8 @@ public class PlayerController implements Controllers {
 
         listenMouseActivitiesOnDisplay();
         manageFullScreenControls();
+
+
     }
 
     public PlayerController(Parameters params) {

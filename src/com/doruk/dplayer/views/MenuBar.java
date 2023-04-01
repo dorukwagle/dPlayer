@@ -44,8 +44,8 @@ public class MenuBar extends VBox {
 
         playback.getItems().add(playSpeed);
 
-        soundOnly = new CheckMenuItem("Audio Only");
-        playback.getItems().add(soundOnly);
+//        soundOnly = new CheckMenuItem("Audio Only");
+//        playback.getItems().add(soundOnly);
 
         playBackSpeedGroup = new ToggleGroup();
         playBackSpeedGroup.getToggles().addAll(firstQuartile, secondQuartile, thirdQuartile, normal, oneAnd1Quartile,
