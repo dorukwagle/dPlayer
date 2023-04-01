@@ -19,6 +19,7 @@ public interface BasicMediaPlayerInterface {
     void setVolume(int volume);
     int getVolume();
     void setTime(long time);
+    Dimension getVideoDimension();
     void setOnComplete(MediaPlayCompleted mediaPlayCompleted);
 
     void setOriginalSize();

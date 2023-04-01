@@ -2,8 +2,8 @@ package com.doruk.dplayer.views;
 
 import com.doruk.dplayer.utilities.ResourceProvider;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
@@ -13,6 +13,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Popup;
+import uk.co.caprica.vlcj.javafx.view.ResizableImageView;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -24,13 +25,23 @@ public class PlayerView extends StackPane {
     private Text popupLabel;
     private Popup popup;
 
+    private StackPane playerHolder;
+    private VideoControlPanel controlPanel;
+    private ImageView mediaView;
+
     public PlayerView(ImageView mediaView, MenuBar menuBar, VideoControlPanel controlPanel, ResourceProvider icons) {
-        var dummyControl = new VideoControlPanel(icons);
-        var dummyMenu = new MenuBar(icons);
+        MenuBar dummyMenu = new MenuBar(icons);
+        VideoControlPanel dummyControl = new VideoControlPanel(icons);
         dummyMenu.setVisible(false);
         dummyControl.setVisible(false);
 
+        setMinSize(0, 0);
+
+        this.controlPanel = controlPanel;
+        this.mediaView = mediaView;
+
         BorderPane playerLay = new BorderPane();
+        playerLay.setMinSize(0, 0);
         playerLay.setBackground(Background.fill(Paint.valueOf("black")));
         barLay = new BorderPane();
         menuBar.setMaxHeight(0);
@@ -44,9 +55,8 @@ public class PlayerView extends StackPane {
         popupLabel.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 25));
         popup.getContent().add(popupLabel);
 
-        playerLay.setTop(dummyMenu);
-
-        StackPane playerHolder = new StackPane();
+        playerHolder = new StackPane();
+        playerHolder.setMaxSize(0, 0);
         playerHolder.setBackground(Background.fill(Paint.valueOf("black")));
         StackPane.setAlignment(mediaView, Pos.CENTER);
         playerHolder.getChildren().add(mediaView);
@@ -57,11 +67,14 @@ public class PlayerView extends StackPane {
         drawerHolder.getChildren().add(drawer);
         barLay.setCenter(drawerHolder);
 
+        playerLay.setBackground(Background.fill(Paint.valueOf("black")));
+        playerHolder.setBackground(Background.fill(Paint.valueOf("black")));
+
+        playerLay.setTop(dummyMenu);
         playerLay.setCenter(playerHolder);
-
         playerLay.setBottom(dummyControl);
-        getChildren().addAll(playerLay, barLay);
 
+        getChildren().addAll(playerLay, barLay);
     }
 
     public void showPopup(String text){
@@ -90,4 +103,5 @@ public class PlayerView extends StackPane {
     public BorderPane getDisplayArea() {
         return barLay ;
     }
+
 }

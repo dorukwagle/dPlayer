@@ -71,7 +71,7 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
         this.mediaView.setPreserveRatio(true);
 
         embeddedMediaPlayer.videoSurface().set(new ImageViewVideoSurface(this.mediaView));
-
+        embeddedMediaPlayer.video().setAdjustVideo(true);
     }
 
     @Override
@@ -102,6 +102,11 @@ public class DMediaPlayer implements ExtendedMediaPlayerInterface {
         else{
             mediaView.setFitWidth(width - 100);
         }
+    }
+
+    @Override
+    public Dimension getVideoDimension(){
+        return embeddedMediaPlayer.video().videoDimension();
     }
 
     @Override

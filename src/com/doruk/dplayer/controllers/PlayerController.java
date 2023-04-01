@@ -4,6 +4,7 @@ import com.doruk.dplayer.contracts.Controllers;
 import com.doruk.dplayer.contracts.ExtendedMediaPlayerInterface;
 import com.doruk.dplayer.mediaplayer.DMediaPlayer;
 import com.doruk.dplayer.models.HomeModel;
+import com.doruk.dplayer.models.PlayerModel;
 import com.doruk.dplayer.seekbar.SeekBar;
 import com.doruk.dplayer.utilities.PreferencesManager;
 import com.doruk.dplayer.utilities.ResourceProvider;
@@ -12,6 +13,7 @@ import com.doruk.dplayer.views.*;
 import javafx.application.Application.Parameters;
 import javafx.application.Platform;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
@@ -21,13 +23,16 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import uk.co.caprica.vlcj.javafx.view.ResizableImageView;
 import uk.co.caprica.vlcj.media.*;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -61,8 +66,10 @@ public class PlayerController implements Controllers {
     private boolean toggleFullScreen = false;
 
     private Stage stage;
+    private PlayerModel model;
 
     public PlayerController(){
+        model = new PlayerModel();
         stage = BaseContainer.getInstance().getStage();
         icons = new ResourceProvider();
         preference = new PreferencesManager();
@@ -169,6 +176,7 @@ public class PlayerController implements Controllers {
                 mediaPlayer.setTime(resume);
         });
         mediaPlayer.setOnTimeChanged(this::trackPlaybackProgress);
+
     }
 
     private void playMedia(){
@@ -227,7 +235,6 @@ public class PlayerController implements Controllers {
         });
 
         var volumeBtn = controlPanel.getAudioBtn();
-//        if(preference.getVolume)
         volumeBtn.setOnAction(event -> {
             if(mediaPlayer.getVolume() > 0) {
                 mediaPlayer.setVolume(0);
@@ -452,6 +459,11 @@ public class PlayerController implements Controllers {
                 event.consume();
                 return;
             }
+            if(code == KeyCode.S){
+                takeScreenShot();
+                event.consume();
+                return;
+            }
             if(code == KeyCode.M){
                 controlPanel.getAudioBtn().fire();
                 event.consume();
@@ -499,7 +511,8 @@ public class PlayerController implements Controllers {
     private void toggleOriginalVideoSize(){
         //maximize the display, store the current size etc
         if(toggleOriginalSize) {
-            mediaPlayer.scaleToScreen(playerViewDimensions);
+            if(toggleFullScreen) mediaPlayer.scaleToScreen(getScreenSize("full"));
+            else mediaPlayer.scaleToScreen(playerViewDimensions);
             playerView.showPopup("Scaled to Screen");
         }
         else {
@@ -507,6 +520,18 @@ public class PlayerController implements Controllers {
             playerView.showPopup("Video's Original Size");
         }
         toggleOriginalSize = !toggleOriginalSize;
+    }
+
+    private void takeScreenShot(){
+        if(mediaPlayer.isPlaying()) mediaPlayer.pause();
+        String msg = "Saved: ";
+        try {
+            msg  += model.saveScreenShot(mediaView);
+        } catch (IOException e) {
+            msg = "Cannot Save: Error Occured";
+            e.printStackTrace();
+        }
+        playerView.showPopup(msg);
     }
 
     private void listenMouseActivitiesOnDisplay(){
@@ -594,6 +619,7 @@ public class PlayerController implements Controllers {
 
     private void scaleOnScreenResize(){
         if(!playerView.isFocusWithin()) return;
+        if(toggleFullScreen) return;
         playerViewDimensions = getScreenSize("visible");
         mediaPlayer.scaleToScreen(playerViewDimensions);
     }
